@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Boggle Solver</string>
+    <string name="edit_message">Enter a message</string>
+    <string name="button_send">Send</string>
+    <string name="up_button">UP</string>
+    <string name="down_button">DOWN</string>
+
+</resources>
