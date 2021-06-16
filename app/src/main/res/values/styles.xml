@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="boggleoutputstyle" parent="@android:style/TextAppearance.Small">
+        <item name="android:fontFamily">@font/boggle_text</item>
+    </style>
+</resources>

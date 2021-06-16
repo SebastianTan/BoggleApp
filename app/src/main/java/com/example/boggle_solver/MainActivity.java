@@ -1,5 +1,6 @@
 package com.example.boggle_solver;
 
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
 import android.view.View;
@@ -21,6 +22,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //textview
         TextView textView = findViewById(R.id.textView2);
         textView.setMovementMethod(new ScrollingMovementMethod());
     }
@@ -32,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
         // Get input text
         EditText editText = (EditText) findViewById(R.id.editText);
         String message = editText.getText().toString();
-        output += (message + "\n\n");
+//        output += (message + "\n\n"); //debug
 
         //Error check input text
         double m_length = Math.sqrt(message.length());
@@ -64,12 +67,13 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        // "LILEROHTOPENZOIA"
-//        String board = message.toUpperCase();
+        // "LILEROHTOPENZOIA" "LCTCWHTEOEIRBSHI"
+        // "
+        String board = message.toUpperCase();
 
         //testing code
-        String board = "EDUUHEIOFTTSRBRMENNOEHIER";
-        m_length = Math.sqrt(board.length());
+//        String board = "EDUUHEIOFTTSRBRMENNOEHIER";
+//        m_length = Math.sqrt(board.length());
 
         //initialize a Boggle solver with a board and a dictionary;
         Boggle boggle = new Boggle(board);
