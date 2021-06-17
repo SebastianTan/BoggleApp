@@ -36,12 +36,13 @@ public class MainActivity extends AppCompatActivity {
         EditText editText = (EditText) findViewById(R.id.editText);
         String message = editText.getText().toString();
 //        output += (message + "\n\n"); //debug
-
+        TextView textView = findViewById(R.id.textView2);
+        textView.scrollTo(0,0);
         //Error check input text
         double m_length = Math.sqrt(message.length());
         if( m_length != Math.floor(m_length)) {
             output = "Please check that your board input is the right size!";
-            TextView textView = findViewById(R.id.textView2);
+
             textView.setText(output);
             return;
         }
@@ -67,8 +68,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        // "LILEROHTOPENZOIA" "LCTCWHTEOEIRBSHI"
-        // "
+        // "LILEROHTOPENZOIA" "LCTCWHTEOEIRBSHI" Debug strings
         String board = message.toUpperCase();
 
         //testing code
@@ -88,7 +88,6 @@ public class MainActivity extends AppCompatActivity {
         for (String s : boggleWords){
             output += (s + "\n");
         }
-        TextView textView = findViewById(R.id.textView2);
         textView.setText(output);
 
     }
