@@ -2,7 +2,9 @@ package com.example.boggle_solver;
 
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.method.ScrollingMovementMethod;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -15,9 +17,70 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
+
+
 public class MainActivity extends AppCompatActivity {
 
+    final boolean DEBUG = true;
+
     public static final String EXTRA_MESSAGE = "com.example.myfirstapp.MESSAGE";
+    static final int scrollSpeed = 100;
+    // Thread running code
+
+    long startTime = 0;
+    int solutionPos = 0;
+    float solutionDelay = 10;
+
+    Handler timerHandler = new Handler();
+    Runnable timerRunnable = new Runnable() {
+        @Override
+        public void run() {
+            long millis = System.currentTimeMillis() - startTime;
+            int seconds = (int) (millis / 1000);
+            int minutes = seconds / 60;
+            seconds = seconds % 60;
+
+
+            TextView textView = findViewById(R.id.textView2);
+            int tvHeight = (int) (textView.getLineCount()*textView.getTextSize());
+//            String curr_text = textView.getText().toString();
+//            curr_text = String.format("%d:%02d\n", minutes, seconds) + curr_text;
+//            textView.setText(curr_text);
+
+            if (tvHeight < scrollSpeed){
+                timerHandler.removeCallbacks(timerRunnable);
+                return;
+            }
+            if (millis > 2250 * 3) {
+                solutionDelay = 1;
+                solutionPos += 18*1.5;
+            }
+            else if (millis > 2250){
+                solutionDelay = 4;
+                solutionPos += 4;
+            }
+            else if (millis > 750) {
+                solutionDelay = 6;
+                solutionPos += 3;
+            }
+            else {
+                solutionPos += 1;
+            }
+
+            textView.scrollTo(0,solutionPos);
+
+            if(solutionPos > tvHeight) {
+                textView.setGravity(Gravity.BOTTOM);
+                //textView.scrollTo(0,tvHeight);
+                timerHandler.removeCallbacks(timerRunnable);
+                return;
+            }
+
+            timerHandler.postDelayed(this, (long)solutionDelay);
+
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,6 +93,10 @@ public class MainActivity extends AppCompatActivity {
     // Runs on button press
     public void sendMessage(View view) {
 
+        //Reset autoscrolling
+        solutionDelay = 10;
+        solutionPos = 0;
+
         String output = ""; //button output text;
 
         // Get input text
@@ -38,6 +105,7 @@ public class MainActivity extends AppCompatActivity {
 //        output += (message + "\n\n"); //debug
         TextView textView = findViewById(R.id.textView2);
         textView.scrollTo(0,0);
+        textView.setGravity(-1);
         //Error check input text
         double m_length = Math.sqrt(message.length());
         if( m_length != Math.floor(m_length)) {
@@ -72,8 +140,10 @@ public class MainActivity extends AppCompatActivity {
         String board = message.toUpperCase();
 
         //testing code
-//        String board = "EDUUHEIOFTTSRBRMENNOEHIER";
-//        m_length = Math.sqrt(board.length());
+        if (DEBUG){
+            board = "EDUUHEIOFTTSRBRMENNOEHIER";
+            m_length = Math.sqrt(board.length());
+        }
 
         //initialize a Boggle solver with a board and a dictionary;
         Boggle boggle = new Boggle(board);
@@ -89,6 +159,9 @@ public class MainActivity extends AppCompatActivity {
             output += (s + "\n");
         }
         textView.setText(output);
+
+        startTime = System.currentTimeMillis();
+        timerHandler.postDelayed(timerRunnable, 0);
 
     }
 }

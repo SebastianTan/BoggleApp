@@ -15,5 +15,6 @@ Android Studio 4.2.1
 # Planned Features
 1. Choose between dictionaries
 2. Make a user-custom dictionary
-3. Sectioned word solution list with navigation
-4. 
+3. Sectioned word solution list with navigation (better scrolling)
+4. Search word list pull up definitions
+5. Add two letter support
