@@ -27,18 +27,22 @@ public class MainActivity extends AppCompatActivity {
     // Runs on button press
     public void sendMessage(View view) {
 
+
+        TextView textView = findViewById(R.id.textView2);
+        textView.scrollTo(0,0);
+
         String output = ""; //button output text;
 
         // Get input text
         EditText editText = (EditText) findViewById(R.id.editText);
         String message = editText.getText().toString();
-        output += (message + "\n\n");
+//        output += (message + "\n\n"); //DEBUG
 
         //Error check input text
         double m_length = Math.sqrt(message.length());
         if( m_length != Math.floor(m_length)) {
             output = "Please check that your board input is the right size!";
-            TextView textView = findViewById(R.id.textView2);
+            textView = findViewById(R.id.textView2);
             textView.setText(output);
             return;
         }
@@ -84,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
         for (String s : boggleWords){
             output += (s + "\n");
         }
-        TextView textView = findViewById(R.id.textView2);
+        textView = findViewById(R.id.textView2);
         textView.setText(output);
 
     }
