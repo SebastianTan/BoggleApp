@@ -16,7 +16,10 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
+    final boolean DEBUG = true;
+
     public static final String EXTRA_MESSAGE = "com.example.myfirstapp.MESSAGE";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,11 +68,8 @@ public class MainActivity extends AppCompatActivity {
         }
         dictionary = dict.toArray(new String[dict.size()]);
 
-
-
-
-        // "LILEROHTOPENZOIA"
-//        String board = message.toUpperCase();
+        // "LILEROHTOPENZOIA" "LCTCWHTEOEIRBSHI" Debug strings
+        String board = message.toUpperCase();
 
         //testing code
         String board = "EDUUHEIOFTTSRBRMENNOEHIER";
