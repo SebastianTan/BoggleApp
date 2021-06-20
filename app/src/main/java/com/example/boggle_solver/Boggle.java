@@ -156,11 +156,12 @@ public class Boggle {
 
 		this.board=this.board.toUpperCase();
 		char[][] boggle = new char[M][N];
-
 		for (int i = 0; i < this.board.length(); i++){
 			boggle[i / M][i % N] = this.board.charAt(i);
-			System.out.print(this.board.charAt(i) + " ");
-			if ((i % N) == 5) System.out.println();
+
+			//DEBUG
+//			System.out.print(this.board.charAt(i) + " ");
+//			if ((i % N) == 5) System.out.println();
 		}
 
 		// char boggle[][] = { { 'G', 'I', 'Z' },
@@ -171,9 +172,10 @@ public class Boggle {
 
 		findWords(boggle, root, set);
 
-		for (String s : set){
-			System.out.println(s);
-		}
+		//DEBUG
+//		for (String s : set){
+//			System.out.println(s);
+//		}
 		return set.toArray(new String[set.size()]);
 	}
 }

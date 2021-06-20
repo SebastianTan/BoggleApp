@@ -21,7 +21,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    final boolean DEBUG = true;
+    final boolean DEBUG = false;
 
     public static final String EXTRA_MESSAGE = "com.example.myfirstapp.MESSAGE";
     static final int scrollSpeed = 100;
@@ -47,11 +47,12 @@ public class MainActivity extends AppCompatActivity {
 //            curr_text = String.format("%d:%02d\n", minutes, seconds) + curr_text;
 //            textView.setText(curr_text);
 
+            //contentOffset to potentially get the full scroll size
             if (tvHeight < scrollSpeed){
                 timerHandler.removeCallbacks(timerRunnable);
                 return;
             }
-            if (millis > 2250 * 3) {
+            if (millis > 2800) {
                 solutionDelay = 1;
                 solutionPos += 18*1.5;
             }
