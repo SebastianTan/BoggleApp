@@ -72,8 +72,8 @@ public class MainActivity extends AppCompatActivity {
         String board = message.toUpperCase();
 
         //testing code
-        String board = "EDUUHEIOFTTSRBRMENNOEHIER";
-        m_length = Math.sqrt(board.length());
+//        String board = "EDUUHEIOFTTSRBRMENNOEHIER";
+//        m_length = Math.sqrt(board.length());
 
         //initialize a Boggle solver with a board and a dictionary;
         Boggle boggle = new Boggle(board);
