@@ -1,10 +1,15 @@
 # Boggle Solver Android App
 An Android App which outputs a word list for a user-inputed boggle board.
 
+![Alt Text](./README_assets/BoggleGif.gif)
 # To Run
 1. Open Android Studio and Import Project folder (with gradle build files at root)
 2. Ensure you have a working and running emulator in the Android Virtual Device Manager (AVD Manager)
 3. Run the app in Android studio (shift-F10)
+
+# To use
+1. Merely enter the letters of an n x n boggle board into the textbox
+2. A word list is outputed sorted by length and then alphabetically
 
 # Specifications
 
