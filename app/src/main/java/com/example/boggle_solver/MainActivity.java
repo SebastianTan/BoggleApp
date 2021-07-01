@@ -17,6 +17,9 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     final boolean DEBUG = true;
+    ArrayList<Integer> sectionHeaders = new ArrayList<Integer>();
+    int scroll = 0;
+    final int NEWLINES = 1;
 
     public static final String EXTRA_MESSAGE = "com.example.myfirstapp.MESSAGE";
 
@@ -72,8 +75,11 @@ public class MainActivity extends AppCompatActivity {
         String board = message.toUpperCase();
 
         //testing code
-//        String board = "EDUUHEIOFTTSRBRMENNOEHIER";
-//        m_length = Math.sqrt(board.length());
+        if (DEBUG) {
+            board = "EDUUHEIOFTTSRBRMENNOEHIER";
+            m_length = Math.sqrt(board.length());
+        }
+
 
         //initialize a Boggle solver with a board and a dictionary;
         Boggle boggle = new Boggle(board);
@@ -85,11 +91,44 @@ public class MainActivity extends AppCompatActivity {
         }
 
         output +="\n";
+        int len = 0;
+        int linNum = 0;
+        int i = 1;
+        sectionHeaders.add(0);
         for (String s : boggleWords){
+            linNum++;
+            if (s.length() > len) {
+                len = s.length();
+                output += ("\n" + len + "-length words \n");
+                sectionHeaders.add((int) (linNum+m_length + (2*(i++)) - NEWLINES ));
+            }
             output += (s + "\n");
         }
         textView = findViewById(R.id.textView2);
         textView.setText(output);
 
+    }
+    public void upSection(View view){
+        toSection(true);
+    }
+    public void downSection(View view){
+        toSection(false);
+    }
+
+    void toSection(boolean up) {
+        if (up) {
+            scroll--;
+        } else {
+            scroll++;
+        }
+        if (scroll < 0 ) {
+            scroll = 0;
+        } else if (scroll > sectionHeaders.size() - 1){
+            scroll = sectionHeaders.size() - 1;
+        } else {
+            TextView textView = findViewById(R.id.textView2);
+            int pos = textView.getLayout().getLineTop(sectionHeaders.get(scroll));
+            textView.scrollTo(0,pos);
+        }
     }
 }
