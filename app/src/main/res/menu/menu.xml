@@ -8,9 +8,4 @@
         android:title="@string/settings"
         app:showAsAction="ifRoom"/>
 
-    <!-- Settings, should always be in the overflow -->
-    <item android:id="@+id/action_favorite"
-        android:title="@string/favorite"
-        app:showAsAction="never"/>
-
 </menu>
