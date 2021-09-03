@@ -5,4 +5,8 @@
     <string name="up_button">UP</string>
     <string name="down_button">DOWN</string>
 
+    <string name="settings">Settings</string>
+    <string name="favorite">Favorites</string>
+    <string name="preference_file_key">BogglePreferences</string>
+
 </resources>
