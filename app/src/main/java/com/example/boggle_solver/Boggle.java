@@ -159,8 +159,9 @@ public class Boggle {
 
 		for (int i = 0; i < this.board.length(); i++){
 			boggle[i / M][i % N] = this.board.charAt(i);
-			System.out.print(this.board.charAt(i) + " ");
-			if ((i % N) == 5) System.out.println();
+			// Debug
+//			System.out.print(this.board.charAt(i) + " ");
+//			if ((i % N) == 5) System.out.println();
 		}
 
 		// char boggle[][] = { { 'G', 'I', 'Z' },
@@ -170,10 +171,10 @@ public class Boggle {
 		SortedSet<String> set = new TreeSet<String>(new BoggleCompare());
 
 		findWords(boggle, root, set);
-
-		for (String s : set){
-			System.out.println(s);
-		}
+//		Debug
+//		for (String s : set){
+//			System.out.println(s);
+//		}
 		return set.toArray(new String[set.size()]);
 	}
 }
