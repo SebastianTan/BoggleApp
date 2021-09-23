@@ -40,4 +40,31 @@
         android:text="Scrabble"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/dict1" />
+<<<<<<< Updated upstream
+=======
+
+    <Button
+        android:id="@+id/button3word"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="96dp"
+        android:layout_marginLeft="96dp"
+        android:layout_marginTop="16dp"
+        android:onClick="threeWord"
+        android:text="3word"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dict1" />
+
+    <Button
+        android:id="@+id/button4word"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginLeft="32dp"
+        android:onClick="fourWord"
+        android:text="4word"
+        app:layout_constraintStart_toEndOf="@+id/button3word"
+        app:layout_constraintTop_toTopOf="@+id/button3word" />
+
+>>>>>>> Stashed changes
 </androidx.constraintlayout.widget.ConstraintLayout>
