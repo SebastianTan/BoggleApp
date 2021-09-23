@@ -20,13 +20,15 @@ public class Boggle {
 
 	final int M;
 	final int N;
-	static int LIMIT = 3;
+	int LIMIT;
 	String board;
 
-	public Boggle (String board) {
+	public Boggle (String board, int limit) {
 		this.M = (int)Math.sqrt(board.length());
 		this.N = this.M;
 		this.board = board;
+		this.LIMIT = limit;
+
 	}
 
 	// trie Node
@@ -81,7 +83,7 @@ public class Boggle {
 						int j, boolean visited[][], String str, SortedSet<String> set)
 	{
 		// if we found word in trie / dictionary
-		if ((root.leaf == true) && str.length() > LIMIT)
+		if ((root.leaf == true) && str.length() >= LIMIT)
 			set.add(str);
 
 		// If both I and j in range and we visited
