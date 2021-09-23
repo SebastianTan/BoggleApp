@@ -1,3 +1,10 @@
+// testing strings
+// "LILEROHTOPENZOIA" "LCTCWHTEOEIRBSHI" Debug strings
+// debugging EDUUHEIOFTTSRBRMENNOEHIER
+
+//doesn't handle sparse boards well (skipped sections)
+
+
 package com.example.boggle_solver;
 
 import android.annotation.SuppressLint;
@@ -19,16 +26,18 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    final boolean DEBUG = false;
-    ArrayList<Integer> sectionHeaders = new ArrayList<Integer>();
-    int scroll = 0;
+    final boolean DEBUG = true;
+    ArrayList<Integer> sectionHeaders = new ArrayList<>();
     final int NEWLINES = 1;
-
-    public static final String EXTRA_MESSAGE = "com.example.myfirstapp.MESSAGE";
+    final int MIN_LEN = 4;
+    int LIMIT_SETTING = 4;
+    int ABS_MIN = 3;
 
     @SuppressLint("ResourceType")
     @Override
@@ -38,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
         TextView textView = findViewById(R.id.wordList);
         textView.setMovementMethod(new ScrollingMovementMethod());
 
-        Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar myToolbar = findViewById(R.id.toolbar);
         myToolbar.inflateMenu(R.menu.menu);
         setSupportActionBar(myToolbar);
 
@@ -54,28 +63,37 @@ public class MainActivity extends AppCompatActivity {
     // Runs on button press
     public void sendMessage(View view) {
 
-
+        sectionHeaders.clear();
         TextView textView = findViewById(R.id.wordList);
         textView.scrollTo(0,0);
 
         String output = ""; //button output text;
 
         // Get input text
-        EditText editText = (EditText) findViewById(R.id.boggleInput);
+
+        EditText editText =  findViewById(R.id.boggleInput);
         String message = editText.getText().toString();
-//        output += (message + "\n\n"); //DEBUG
 
         //Error check input text
+
         double m_length = Math.sqrt(message.length());
         if( m_length != Math.floor(m_length)) {
             output = "Please check that your board input is the right size!";
             textView = findViewById(R.id.wordList);
             textView.setText(output);
             return;
+        } else if (m_length == 0 && !DEBUG){
+            output = "No board inputted!";
+            textView.setText(output);
+            return;
         }
 
         SharedPreferences sP = this.getSharedPreferences(getString(R.string.preference_file_key),Context.MODE_PRIVATE);
         int dictFilename = sP.getInt(getString(R.string.preference_file_key),R.raw.scrabble);
+
+        sP = this.getSharedPreferences("MinPreferences", Context.MODE_PRIVATE);
+        LIMIT_SETTING = sP.getInt("MinPreferences", 4);
+
 
         switch(dictFilename) {
             case R.raw.scrabble:
@@ -90,13 +108,12 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
-        String dictionary[] = {};
+        String[] dictionary;
 
-        StringBuffer buf = new StringBuffer();
         InputStream is = this.getResources().openRawResource(dictFilename);
         BufferedReader br = new BufferedReader(new InputStreamReader(is));
-        List<String> dict = new ArrayList<String>();
-        String data = null;
+        List<String> dict = new ArrayList<>();
+        String data;
         try {
             while ((data = br.readLine()) != null){
                 dict.add(data);
@@ -118,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         //initialize a Boggle solver with a board and a dictionary;
-        Boggle boggle = new Boggle(board);
+        Boggle boggle = new Boggle(board, LIMIT_SETTING);
         String boggleWords[] = boggle.solveBoggle(dictionary);
 
         for (int i = 0; i < board.length(); i++){
@@ -130,18 +147,58 @@ public class MainActivity extends AppCompatActivity {
         int len = 0;
         int linNum = 0;
         int i = 1;
+        int score = 0;
+
+        //for three letter words;
+
+        ArrayList<Integer> scoring = new ArrayList<Integer>(Arrays.asList(1,1,2,3,5,11));
+        scoring = new ArrayList<Integer> (scoring.subList(LIMIT_SETTING - ABS_MIN, scoring.size()));
+
+        String temp = "";
+        int lastLinNum = 0;
         sectionHeaders.add(0);
+        ArrayList<String> outputString = new ArrayList<>(0);
+        // 4 1 0 0
         for (String s : boggleWords){
             linNum++;
             if (s.length() > len) {
                 len = s.length();
-                output += ("\n" + len + "-length words \n");
-                sectionHeaders.add((int) (linNum+m_length + (2*(i++)) - NEWLINES ));
+
+                if(temp != ""){
+                    int offset = 0;
+
+                    if(len==MIN_LEN+1) offset= -1;
+
+                    int wordcount = linNum-lastLinNum+offset;
+                    int value = 1;
+
+                    if(i<scoring.size()-1+MIN_LEN){
+                        value=scoring.get(i-2);
+                    } else {
+                        value=scoring.get(scoring.size()-1);
+                    }
+                    score += (wordcount*value);
+
+                    outputString.add("Score: " + (wordcount) +"\n");
+                    lastLinNum=linNum;
+                    outputString.add(temp);
+                    temp="";
+                }
+
+                outputString.add("\n" + len + "-length words \n");
+                sectionHeaders.add((int) (linNum+m_length + (3*(i++)) - NEWLINES ));
             }
-            output += (s + "\n");
+            temp += (s + "\n");
         }
+        outputString.add("Score: " + (linNum-lastLinNum+1) +"\n");
+        outputString.add(temp);
+
+        output+="Total Score: " + score + "\n";
         textView = findViewById(R.id.wordList);
-        textView.setText(output);
+
+        String out = output+String.join("", outputString);
+        System.out.println(out);
+        textView.setText(out);
 
     }
 
@@ -167,26 +224,34 @@ public class MainActivity extends AppCompatActivity {
 
     }
     public void upSection(View view){
+
         toSection(true);
     }
     public void downSection(View view){
+
         toSection(false);
     }
 
     void toSection(boolean up) {
-        if (up) {
-            scroll--;
-        } else {
-            scroll++;
+
+        TextView textView = findViewById(R.id.wordList);
+        ArrayList<Integer> localSections = new ArrayList<>(sectionHeaders);
+        if(up) {
+            Collections.reverse(localSections);
         }
-        if (scroll < 0 ) {
-            scroll = 0;
-        } else if (scroll > sectionHeaders.size() - 1){
-            scroll = sectionHeaders.size() - 1;
-        } else {
-            TextView textView = findViewById(R.id.wordList);
-            int pos = textView.getLayout().getLineTop(sectionHeaders.get(scroll));
-            textView.scrollTo(0,pos);
+
+        int pos=0;
+        for(int sections : localSections) {
+            pos = textView.getLayout().getLineTop(sections);
+            //down
+            if(!up && pos > textView.getScrollY()) {
+                textView.scrollTo(0,pos);
+                return;
+                //up
+            } else if (up && pos < textView.getScrollY()){
+                textView.scrollTo(0,pos);
+                return;
+            }
         }
     }
 }

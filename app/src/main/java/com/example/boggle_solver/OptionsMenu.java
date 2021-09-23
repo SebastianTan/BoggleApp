@@ -32,12 +32,27 @@ public class OptionsMenu extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.back, menu);
         return true;
     }
+
+    //onclick methods
+
+    //dictionaries
     public void dict1(View view){
         updateDict(1);
     }
     public void dict2(View view){
         updateDict(0);
     }
+
+    //word buttons
+    public void threeWord(View view) {
+        updateMin(3);
+    };
+    public void fourWord (View view) {
+        updateMin(4);
+
+    };
+
+    //shared pref functions
 
     public void updateDict(int i) {
         SharedPreferences sharedPref = this.getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
@@ -54,6 +69,13 @@ public class OptionsMenu extends AppCompatActivity {
         editor.apply();
     }
 
+    public void updateMin(int minWord) {
+        SharedPreferences sharedPref = this.getSharedPreferences("MinPreferences", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+
+        editor.putInt("MinPreferences", minWord);
+        editor.apply();
+    }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
