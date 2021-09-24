@@ -23,11 +23,14 @@
         android:id="@+id/dict1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/button_offset"
-        android:layout_marginLeft="@dimen/button_offset"
         android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
         android:onClick="dict1"
         android:text="yawl"
+        app:layout_constraintEnd_toStartOf="@+id/dict2"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/optionsToolbar" />
 
@@ -35,22 +38,23 @@
         android:id="@+id/dict2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/button_offset"
-        android:layout_marginRight="@dimen/button_offset"
         android:onClick="dict2"
         android:text="Scrabble"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/dict1"
         app:layout_constraintTop_toTopOf="@+id/dict1" />
 
     <Button
         android:id="@+id/button3word"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginLeft="32dp"
         android:layout_marginTop="16dp"
         android:onClick="threeWord"
         android:text="3word"
+        app:layout_constraintEnd_toStartOf="@+id/button4word"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/dict1" />
 
@@ -58,28 +62,29 @@
         android:id="@+id/button4word"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginLeft="32dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
         android:onClick="fourWord"
         android:text="4word"
+        app:layout_constraintEnd_toStartOf="@+id/editTextNumber2"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/button3word"
         app:layout_constraintTop_toTopOf="@+id/button3word" />
 
     <EditText
         android:id="@+id/editTextNumber2"
-        android:layout_width="0dp"
+        android:layout_width="52dp"
         android:layout_height="0dp"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
         android:ems="10"
         android:hint="hi"
         android:inputType="number"
         app:layout_constraintBottom_toBottomOf="@+id/button4word"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/button4word"
-        app:layout_constraintTop_toTopOf="@+id/button4word" />
+        app:layout_constraintTop_toTopOf="@+id/button4word"
+        app:layout_constraintVertical_bias="0.45999998" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
