@@ -33,9 +33,9 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    final boolean DEBUG = true;
+    final boolean DEBUG = false;
     ArrayList<Integer> sectionHeaders = new ArrayList<>();
-    final int NEWLINES = 1;
+    int NEWLINES = 1;
     final int MIN_LEN = 4;
     int LIMIT_SETTING = 4;
     int ABS_MIN = 3;
@@ -159,6 +159,12 @@ public class MainActivity extends AppCompatActivity {
         int lastLinNum = 0;
         sectionHeaders.add(0);
         ArrayList<String> outputString = new ArrayList<>(0);
+
+
+        //length of first line.
+        if(textView.getWidth() < 23*18) {
+            NEWLINES = 0;
+        }
         // 4 1 0 0
         for (String s : boggleWords){
             linNum++;
@@ -186,6 +192,9 @@ public class MainActivity extends AppCompatActivity {
                     temp="";
                 }
 
+
+
+
                 outputString.add("\n" + len + "-length words \n");
                 sectionHeaders.add((int) (linNum+m_length + (3*(i++)) - NEWLINES ));
             }
@@ -195,7 +204,6 @@ public class MainActivity extends AppCompatActivity {
         outputString.add(temp);
 
         output+="Total Score: " + score + "\n";
-        textView = findViewById(R.id.wordList);
 
         String out = output+String.join("", outputString);
         System.out.println(out);
@@ -246,13 +254,13 @@ public class MainActivity extends AppCompatActivity {
             pos = textView.getLayout().getLineTop(sections);
             //down
             if(!up && pos > textView.getScrollY()) {
-                textView.scrollTo(0,pos);
-                return;
-                //up
-            } else if (up && pos < textView.getScrollY()){
-                textView.scrollTo(0,pos);
-                return;
+                break;
+
+            } else if (up && pos < textView.getScrollY()){ //up
+                break;
             }
         }
+        System.out.println(localSections);
+        textView.scrollTo(0,pos);
     }
 }

@@ -50,14 +50,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginRight="32dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
         android:onClick="threeWord"
         android:text="3word"
-        app:layout_constraintEnd_toStartOf="@+id/button4word"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintHorizontal_chainStyle="packed"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/dict1"
         app:layout_constraintTop_toBottomOf="@+id/dict1" />
 
     <Button
@@ -65,29 +62,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 
-        android:onClick="fourWord"
-        android:text="4word"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/button3word"
-        app:layout_constraintTop_toTopOf="@+id/button3word" />
-
-    <EditText
-        android:id="@+id/editTextNumber2"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:ems="10"
-        android:hint="hi"
-        android:inputType="number"
-        app:layout_constraintBottom_toBottomOf="@+id/button4word"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/button4word"
-        app:layout_constraintTop_toTopOf="@+id/button4word" />
+        android:onClick="fourWord"
+        android:text="4word"
+        app:layout_constraintStart_toStartOf="@+id/dict2"
+        app:layout_constraintTop_toTopOf="@+id/button3word" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 >>>>>>> main
