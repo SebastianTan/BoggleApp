@@ -33,7 +33,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    final boolean DEBUG = false;
+    final boolean DEBUG = true;
     ArrayList<Integer> sectionHeaders = new ArrayList<>();
     int NEWLINES = 1;
     final int MIN_LEN = 4;
@@ -162,7 +162,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         //length of first line.
-        if(textView.getWidth() < 23*18) {
+        if(textView.getWidth() <= 720) {
             NEWLINES = 0;
         }
         // 4 1 0 0
@@ -179,7 +179,7 @@ public class MainActivity extends AppCompatActivity {
                     int wordcount = linNum-lastLinNum+offset;
                     int value = 1;
 
-                    if(i<scoring.size()-1+MIN_LEN){
+                    if(i<scoring.size()-1){
                         value=scoring.get(i-2);
                     } else {
                         value=scoring.get(scoring.size()-1);
