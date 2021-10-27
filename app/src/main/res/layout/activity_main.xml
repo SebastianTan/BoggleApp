@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/homeConstraint"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
@@ -25,14 +26,13 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
         android:ems="10"
         android:hint="@string/edit_message"
         android:inputType="textPersonName"
         app:layout_constraintEnd_toStartOf="@+id/confirmInput"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+        tools:layout_editor_absoluteY="76dp" />
 
     <Button
         android:id="@+id/confirmInput"
@@ -44,10 +44,10 @@
         android:layout_marginRight="16dp"
         android:onClick="sendMessage"
         android:text="@string/button_send"
-        app:layout_constraintBaseline_toBaselineOf="@+id/boggleInput"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/boggleInput" />
+        app:layout_constraintStart_toEndOf="@+id/boggleInput"
+        app:layout_constraintTop_toTopOf="@+id/boggleInput" />
 
     <TextView
         android:id="@+id/wordList"
@@ -71,25 +71,24 @@
         android:id="@+id/upbutton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
-        android:layout_marginBottom="16dp"
         android:onClick="upSection"
         android:text="@string/up_button"
-        app:layout_constraintBottom_toTopOf="@+id/downbutton"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/confirmInput"
+        app:layout_constraintTop_toBottomOf="@+id/confirmInput" />
 
     <Button
         android:id="@+id/downbutton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
+        android:layout_marginTop="16dp"
         android:onClick="downSection"
         android:text="@string/down_button"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.538" />
+        app:layout_constraintEnd_toEndOf="@+id/upbutton"
+        app:layout_constraintStart_toStartOf="@+id/upbutton"
+        app:layout_constraintTop_toBottomOf="@+id/upbutton" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

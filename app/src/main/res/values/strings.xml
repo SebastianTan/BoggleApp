@@ -8,5 +8,6 @@
     <string name="settings">Settings</string>
     <string name="favorite">Favorites</string>
     <string name="preference_file_key">BogglePreferences</string>
+    <string name="board_input_dummy">a</string>
 
 </resources>

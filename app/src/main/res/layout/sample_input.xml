@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<EditText xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/bottom_left"
+    android:layout_width="wrap_content"
+    android:width="40dp"
+    android:layout_height="38dp"
+    android:layout_marginTop="16dp"
+    android:ems="10"
+    android:hint="11"
+    android:inputType="text"
+    app:layout_constraintStart_toStartOf="@+id/boggleInput"
+    app:layout_constraintTop_toBottomOf="@+id/toolbar" />

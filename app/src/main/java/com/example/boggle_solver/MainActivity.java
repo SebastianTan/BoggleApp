@@ -16,11 +16,13 @@ import android.text.method.ScrollingMovementMethod;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -30,6 +32,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static java.lang.Math.sqrt;
+
 public class MainActivity extends AppCompatActivity {
 
     final boolean DEBUG = true;
@@ -38,18 +42,59 @@ public class MainActivity extends AppCompatActivity {
     final int MIN_LEN = 4;
     int LIMIT_SETTING = 4;
     int ABS_MIN = 3;
+    int boardSize = 36;
 
     @SuppressLint("ResourceType")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        boolean addSpecialBoard = true;
+
+        if(addSpecialBoard){
+            ConstraintLayout constraintLayout = findViewById(R.id.homeConstraint);
+            int[] ids = new int[boardSize]; //left to right top to bottom
+            for(int i = 0; i < boardSize ; i++){
+                EditText exam = (EditText) constraintLayout.inflate(this,R.layout.sample_input,null);
+
+                int id = View.generateViewId();
+                exam.setId(id); //works for API17+
+                ids[i]=id;
+                constraintLayout.addView(exam);
+                ConstraintLayout.LayoutParams layoutParams  = (ConstraintLayout.LayoutParams) exam.getLayoutParams();
+
+                //first row
+                if(i < (int)sqrt(boardSize)) {
+                    layoutParams.topToBottom = R.id.toolbar;
+                } else {
+                    layoutParams.topToBottom = ids[(int) (i-sqrt(boardSize))];
+                }
+
+                if(i % sqrt(boardSize) == 0) {
+                    layoutParams.startToStart = R.id.boggleInput;
+                } else {
+                    layoutParams.startToEnd = ids[i-1];
+                }
+            }
+
+            View exam_board = findViewById(R.id.boggleInput);
+            ConstraintLayout.LayoutParams exam_params = (ConstraintLayout.LayoutParams) exam_board.getLayoutParams();
+            exam_params.topToBottom = ids[boardSize-1];
+
+        }
+
         TextView textView = findViewById(R.id.wordList);
         textView.setMovementMethod(new ScrollingMovementMethod());
 
         Toolbar myToolbar = findViewById(R.id.toolbar);
         myToolbar.inflateMenu(R.menu.menu);
         setSupportActionBar(myToolbar);
+
+        View exam_board = findViewById(R.id.boggleInput);
+        ConstraintLayout.LayoutParams exam_params = (ConstraintLayout.LayoutParams) exam_board.getLayoutParams();
+        if(!addSpecialBoard) {
+            exam_params.topToBottom = R.id.toolbar;
+        }
 
     }
 
@@ -76,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
 
         //Error check input text
 
-        double m_length = Math.sqrt(message.length());
+        double m_length = sqrt(message.length());
         if( m_length != Math.floor(m_length)) {
             output = "Please check that your board input is the right size!";
             textView = findViewById(R.id.wordList);
@@ -130,7 +175,7 @@ public class MainActivity extends AppCompatActivity {
         //testing code
         if (DEBUG) {
             board = "EDUUHEIOFTTSRBRMENNOEHIER";
-            m_length = Math.sqrt(board.length());
+            m_length = sqrt(board.length());
         }
 
 
