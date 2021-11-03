@@ -1,30 +1,49 @@
 package com.example.boggle_solver;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
+import android.widget.Button;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
 
 public class OptionsMenu extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.options_menu);
 
-        Intent intent = getIntent();
-
-        Toolbar optionsToolbar = (Toolbar) findViewById(R.id.optionsToolbar);
+        Toolbar optionsToolbar = findViewById(R.id.optionsToolbar);
         optionsToolbar.inflateMenu(R.menu.back);
         setSupportActionBar(optionsToolbar);
-        //String message = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
+
+
+        int[] buttons = {
+                R.id.dict1,
+                R.id.dict2,
+                R.id.button3word,
+                R.id.button4word
+        };
+
+        Button button = findViewById(buttons[0]);
+        button.setOnClickListener(this::dict1);
+
+        button =  findViewById(buttons[1]);
+        button.setOnClickListener(this::dict2);
+
+        button = findViewById(buttons[2]);
+        button.setOnClickListener(this::threeWord);
+
+        button = findViewById(buttons[3]);
+        button.setOnClickListener(this::fourWord);
     }
 
     @Override
@@ -33,7 +52,18 @@ public class OptionsMenu extends AppCompatActivity {
         return true;
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.settings) {
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     //onclick methods
+
+
 
     //dictionaries
     public void dict1(View view){
@@ -46,25 +76,24 @@ public class OptionsMenu extends AppCompatActivity {
     //word buttons
     public void threeWord(View view) {
         updateMin(3);
-    };
+    }
+
     public void fourWord (View view) {
         updateMin(4);
 
-    };
+    }
 
-    //shared pref functions
+    //shared pref functions which update values
 
     public void updateDict(int i) {
         SharedPreferences sharedPref = this.getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
 
         SharedPreferences.Editor editor = sharedPref.edit();
 
-        switch(i) {
-            case 1:
-                editor.putInt(getString(R.string.preference_file_key), R.raw.yawl);
-                break;
-            default:
-                editor.putInt(getString(R.string.preference_file_key), R.raw.scrabble);
+        if (i == 1) {
+            editor.putInt(getString(R.string.preference_file_key), R.raw.yawl);
+        } else {
+            editor.putInt(getString(R.string.preference_file_key), R.raw.scrabble);
         }
         editor.apply();
     }
@@ -76,16 +105,4 @@ public class OptionsMenu extends AppCompatActivity {
         editor.putInt("MinPreferences", minWord);
         editor.apply();
     }
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch(item.getItemId()) {
-            case R.id.settings: {
-                finish();
-                return true;
-            }
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
 }
