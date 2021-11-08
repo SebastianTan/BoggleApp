@@ -91,9 +91,9 @@ public class OptionsMenu extends AppCompatActivity {
         SharedPreferences.Editor editor = sharedPref.edit();
 
         if (i == 1) {
-            editor.putInt(getString(R.string.preference_file_key), R.raw.yawl);
+            editor.putString(getString(R.string.dictPref), "yawl");
         } else {
-            editor.putInt(getString(R.string.preference_file_key), R.raw.scrabble);
+            editor.putString(getString(R.string.dictPref), "scrabble");
         }
         editor.apply();
     }

@@ -11,7 +11,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
 import android.view.Menu;
@@ -27,16 +26,14 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 public class SolverActivity extends AppCompatActivity {
 
-    final boolean DEBUG = false;
+    final boolean DEBUG = true;
     ArrayList<Integer> sectionHeaders = new ArrayList<>();
-    int NEWLINES = 1; //constant for wordlist display offset
-    final int MIN_LEN = 4; //sets an offset for the wordcount
+    int lineConst = -3; //constant for wordlist display offset
     int LIMIT_SETTING = 4; //user-defined min word length
     final int ABS_MIN = 3; //absolute minimum word length
 
@@ -77,36 +74,48 @@ public class SolverActivity extends AppCompatActivity {
 
         // Get input text
         EditText boggleInput =  findViewById(R.id.boggleInput);
-        String message = boggleInput.getText().toString();
+        String board = boggleInput.getText().toString();
 
 
         //Error check input text
-        double m_length = Math.sqrt(message.length());
-        if( m_length != Math.floor(m_length)) {
-            output.append("Please check that your board input is the right size!");
+
+        board = board.toUpperCase();
+        for(char c: board.toCharArray()) {
+            if((int)c < 'A' || (int)c > 'Z' ){
+                output.append("Please input letters!");
+                wordList.setText(output);
+                return ;
+            }
+        }
+
+        double boardDim = Math.sqrt(board.length());
+        if( boardDim != Math.floor(boardDim)) {
+            output.append("Please input a square board! You have only inputted ").append(board.length()).append(" letters.");
             wordList = findViewById(R.id.wordList);
             wordList.setText(output);
             return;
-        } else if (m_length == 0 && !DEBUG){
+        } else if (boardDim == 0 && !DEBUG){
             output.append("No board inputted!");
             wordList.setText(output);
             return;
         }
-        String board = message.toUpperCase();
+
+
 
 
         //initialize user-settings
         SharedPreferences sP = this.getSharedPreferences(getString(R.string.preference_file_key),Context.MODE_PRIVATE);
-        int dictFilename = sP.getInt(getString(R.string.preference_file_key),R.raw.scrabble);
-
+        String dictFilename = sP.getString(getString(R.string.dictPref),"scrabble");
+        int dictIndex = R.raw.scrabble;
         sP = this.getSharedPreferences("MinPreferences", Context.MODE_PRIVATE);
         LIMIT_SETTING = sP.getInt("MinPreferences", 4);
 
         switch(dictFilename) {
-            case R.raw.scrabble:
+            case "scrabble":
                 output.append("Using Scrabble dictionary \n");
                 break;
-            case R.raw.yawl:
+            case "yawl":
+                dictIndex = R.raw.yawl;
                 output.append("Using Awesome Word List \n");
                 break;
             default:
@@ -116,7 +125,7 @@ public class SolverActivity extends AppCompatActivity {
         //Import dictionary
         String[] dictionary;
 
-        InputStream is = this.getResources().openRawResource(dictFilename);
+        InputStream is = this.getResources().openRawResource(dictIndex);
         BufferedReader br = new BufferedReader(new InputStreamReader(is));
         List<String> dict = new ArrayList<>();
         String data;
@@ -128,100 +137,105 @@ public class SolverActivity extends AppCompatActivity {
             e.printStackTrace();
             return;
         }
-        dictionary = dict.toArray(new String[dict.size()]);
+        dictionary = dict.toArray(new String[0]);
 
         // "LILEROHTOPENZOIA" "LCTCWHTEOEIRBSHI" Debug strings
         //testing code
         if (DEBUG) {
             board = "EDUUHEIOFTTSRBRMENNOEHIER";
-            m_length = Math.sqrt(board.length());
+            boardDim = Math.sqrt(board.length());
         }
 
 
         //initialize a Boggle solver with a board and a dictionary;
         Boggle boggle = new Boggle(board, LIMIT_SETTING);
-        String boggleWords[] = boggle.solveBoggle(dictionary);
+        String[] boggleWords = boggle.solveBoggle(dictionary);
 
         for (int i = 0; i < board.length(); i++){
 
-            output.append(board.charAt(i) + " ");
-            if ((i % m_length) == (m_length-1)) output.append("\n");
+            output.append(board.charAt(i)).append(" ");
+            if ((i % boardDim) == (boardDim -1)) output.append("\n");
         }
         output.append("\n");
 
         //initialize scoring and count variables
-        int len = 0;
-        int linNum = 0;
-        int i = 1;
-        int score = 0;
+        int len = 0; //current len of words
+        int linNum = 0; //# of lines
+        int scoreIndex = 0;
+        int totalScore = 0;
 
+        //Starts with score for 3-letter words
+//        LinkedList<Integer> scoring = new LinkedList<>(Arrays.asList(11,5,3,2,1,1));
 
-        ArrayList<Integer> scoring = new ArrayList<>(Arrays.asList(1,1,2,3,5,11));
-        //sublist ensures proper scoring is used.
-        scoring = new ArrayList<> (scoring.subList(LIMIT_SETTING - ABS_MIN, scoring.size()));
+        int[] scoring = {1,1,2,3,5,11};
 
-        String temp = ""; //temp to calculate the score before writing to output.
-        int lastLinNum = 0;
+        //temp to calculate the score before writing to output.
         sectionHeaders.add(0);
         ArrayList<String> outputString = new ArrayList<>(0);
 
         //length of first line. Ensures the number of newlines is correct
         if(wordList.getWidth() <= 720) {
-            NEWLINES = 0;
+            lineConst = 0;
         }
 
         //create wordlist output
         for (String s : boggleWords){
             linNum++;
             if (s.length() > len) { //if we have a new set of m-length words
-                len = s.length();
-
-                if(temp != ""){
-                    int offset = 0;
-
-                    if(len==MIN_LEN+1) offset= -1;
-
-                    int wordcount = linNum-lastLinNum+offset;
-                    int value = 1;
-
-                    if(i<scoring.size()-1){
-                        value=scoring.get(i-2);
-                    } else { //use last element for scoring large words
-                        value=scoring.get(scoring.size()-1);
-                    }
-                    score += (wordcount*value);
-
-                    outputString.add("Score: " + (wordcount) +"\n");
-                    lastLinNum=linNum;
-                    outputString.add(temp);
-                    temp="";
+                len = s.length(); //current set of m-length words
+                int wordCount = boggle.getCount(len);
+                int currScore;
+                if(len < 9){ //Max word length for scoring
+                    currScore=scoring[len-ABS_MIN];
+                } else {
+                    currScore=scoring[scoring.length-1]+(len-8)*2;
                 }
-
-
-
+                currScore *= wordCount;
 
                 outputString.add("\n" + len + "-length words \n");
-                sectionHeaders.add((int) (linNum+m_length + (3*(i++)) - NEWLINES ));
-            }
-            temp += (s + "\n");
-        }
-        outputString.add("Score: " + (linNum-lastLinNum+1) +"\n");
-        outputString.add(temp);
+                outputString.add("Score: " + (currScore) +"\n");
+                sectionHeaders.add((int) (linNum+ boardDim + (3*(scoreIndex++)) - lineConst));
 
-        output.append("Total Score: " + score + "\n");
-//        System.out.println(out);
-        wordList.setText(output.append(String.join("", outputString)));
+
+//                if(temp != ""){
+//                    int offset = 0;
+//
+//                    if(len==MIN_LEN+1) offset= -1;
+//
+//                    int wordcount = linNum-lastLinNum+offset;
+//                    int value = 1;
+//
+//                    if(i<scoring.size()-1){
+//                        value=scoring.get(i-2);
+//                    } else { //use last element for scoring large words
+//                        value=scoring.get(scoring.size()-1);
+//                    }
+//                    totalScore += (wordcount*value);
+//
+//                    outputString.add("Score: " + (wordcount) +"\n");
+//                    lastLinNum=linNum;
+//                    outputString.add(temp);
+//                    temp="";
+//                }
+            }
+            outputString.add(s + "\n");
+        }
+//        outputString.add("Score: " + (linNum-lastLinNum+1) +"\n");
+//        outputString.add(temp);
+
+        output.append("Total Score: ").append(totalScore).append("\n");
+        String out = output.append(String.join("", outputString)).toString();
+        wordList.setText(out);
+        System.out.print(out);
 
     }
 
     //Opens option menu
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch(item.getItemId()) {
-            case R.id.action_settings:
-                openOptions();
-                return true;
-
+        if (item.getItemId() == R.id.action_settings) {
+            openOptions();
+            return true;
         }
         return false;
     }

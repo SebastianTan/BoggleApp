@@ -12,6 +12,12 @@ class BoggleCompare implements Comparator<String> {
 			return a.compareTo(b);
 	}
 }
+
+class MutableInt { //non-thread safe class for incrementing score
+	int value = 1;
+	public void increment() { ++value;}
+	public int get() { return value; }
+}
 // Java program for Boggle game
 public class Boggle {
 
@@ -22,7 +28,7 @@ public class Boggle {
 	final int N;
 	int LIMIT;
 	String board;
-
+	Map<Integer,MutableInt> score = new HashMap<>();
 	public Boggle (String board, int limit) {
 		this.M = (int)Math.sqrt(board.length());
 		this.N = this.M;
@@ -32,7 +38,7 @@ public class Boggle {
 	}
 
 	// trie Node
-	class TrieNode {
+	static class TrieNode {
 		TrieNode[] Child = new TrieNode[SIZE];
 
 		// isLeaf is true if the node represents
@@ -71,7 +77,7 @@ public class Boggle {
 
 	// function to check that current location
 	// (i and j) is in matrix range
-	boolean isSafe(int i, int j, boolean visited[][])
+	boolean isSafe(int i, int j, boolean[][] visited)
 	{
 		return (i >= 0 && i < M && j >= 0
 				&& j < N && !visited[i][j]);
@@ -79,12 +85,19 @@ public class Boggle {
 
 	// A recursive function to print
 	// all words present on boggle
-	void searchWord(TrieNode root, char boggle[][], int i,
-						int j, boolean visited[][], String str, SortedSet<String> set)
+	void searchWord(TrieNode root, char[][] boggle, int i,
+					int j, boolean[][] visited, String str, SortedSet<String> wordList)
 	{
 		// if we found word in trie / dictionary
-		if ((root.leaf == true) && str.length() >= LIMIT)
-			set.add(str);
+		if ((root.leaf) && str.length() >= LIMIT) {
+			MutableInt count = score.get(str.length());
+			if(count == null)
+				score.put(str.length(), new MutableInt());
+			else
+				count.increment();
+			wordList.add(str);
+		}
+
 
 		// If both I and j in range and we visited
 		// that element of matrix first time
@@ -104,7 +117,7 @@ public class Boggle {
 								&& boggle[i + a][j + b] == ch)
 								searchWord(root.Child[K], boggle,
 										i + a, j + b,
-										visited, str + ch, set);
+										visited, str + ch, wordList);
 						}
 					}
 				}
@@ -116,13 +129,12 @@ public class Boggle {
 	}
 
 	// Prints all words present in dictionary.
-	void findWords(char boggle[][], TrieNode root, SortedSet<String> set)
+	void findWords(char[][] boggle, TrieNode root, SortedSet<String> set)
 	{
 		// Mark all characters as not visited
 		boolean[][] visited = new boolean[M][N];
-		TrieNode pChild = root;
 
-		String str = "";
+		StringBuilder str = new StringBuilder();
 
 		// traverse all matrix elements
 		for (int i = 0; i < M; i++) {
@@ -130,15 +142,22 @@ public class Boggle {
 				// we start searching for word in dictionary
 				// if we found a character which is child
 				// of Trie root
-				if (pChild.Child[(boggle[i][j]) - 'A'] != null) {
+				if (root.Child[(boggle[i][j]) - 'A'] != null) {
 
-					str = str + boggle[i][j];
-					searchWord(pChild.Child[(boggle[i][j]) - 'A'],
-							boggle, i, j, visited, str, set);
-					str = "";
+					str.append(boggle[i][j]);
+					searchWord(root.Child[(boggle[i][j]) - 'A'],
+							boggle, i, j, visited, str.toString(), set);
+					str = new StringBuilder();
 				}
 			}
 		}
+	}
+
+	//Output functions
+	// Gets wordcount of an m-length set of words
+	public int getCount(int len){
+		MutableInt i = score.get(len);
+		return ( i==null ) ? 0 : i.get();
 	}
 
 	// Driver program to test above function
@@ -152,9 +171,9 @@ public class Boggle {
 		TrieNode root = new TrieNode();
 
 		// insert all words of dictionary into trie
-		int n = dictionary.length;
-		for (int i = 0; i < n; i++)
-			insert(root, dictionary[i]);
+		for (String s : dictionary) {
+			insert(root, s);
+		}
 
 		this.board=this.board.toUpperCase();
 		char[][] boggle = new char[M][N];
@@ -170,14 +189,14 @@ public class Boggle {
 		// 					{ 'U', 'E', 'K' },
 		// 					{ 'Q', 'S', 'E' } };
 
-		SortedSet<String> set = new TreeSet<String>(new BoggleCompare());
+		SortedSet<String> set = new TreeSet<>(new BoggleCompare());
 
 		findWords(boggle, root, set);
 //		Debug
 //		for (String s : set){
 //			System.out.println(s);
 //		}
-		return set.toArray(new String[set.size()]);
+		return set.toArray(new String[0]);
 	}
 }
 // This code is contributed by Sumit Ghosh
