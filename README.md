@@ -2,14 +2,22 @@
 An Android App which outputs a word list for a user-inputed boggle board.
 
 ![Alt Text](./README_assets/BoggleGif.gif)
+
+# Features
+* Fast solution generation
+* Settings to customize word output
+* Navigation controls
+* Error Checking of input
+
 # To Run
 1. Open Android Studio and Import Project folder (with gradle build files at root)
 2. Ensure you have a working and running emulator in the Android Virtual Device Manager (AVD Manager)
 3. Run the app in Android studio (shift-F10)
 
 # To use
-1. Merely enter the letters of an n x n boggle board into the textbox
+1. Merely enter the letters of an N x N boggle board into the textbox
 2. A word list is outputed sorted by length and then alphabetically
+3. Includes settings to modify minimum word length and dictionary usage on resubmit.
 
 # Specifications
 
@@ -18,8 +26,6 @@ Pixel 2 API 29 Emulator
 Android Studio 4.2.1
 
 # Planned Features
-1. Choose between dictionaries
-2. Make a user-custom dictionary
-3. Sectioned word solution list with navigation (better scrolling)
-4. Search word list pull up definitions
-5. Add two letter support
+* Make a user-custom dictionary
+* Search word list and pull up definitions
+* Add two letter support/custom blocks
