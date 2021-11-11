@@ -10,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication">
 
-        <activity android:name="com.example.boggle_solver.MainActivity">
+        <activity android:name="com.example.boggle_solver.SolverActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -18,10 +18,10 @@
         </activity>
 
         <activity android:name="com.example.boggle_solver.OptionsMenu"
-            android:parentActivityName="com.example.boggle_solver.MainActivity">
+            android:parentActivityName="com.example.boggle_solver.SolverActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+                android:value=".SolverActivity" />
 
         </activity>
 

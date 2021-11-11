@@ -2,10 +2,9 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/homeConstraint"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".SolverActivity">
 
 
     <androidx.appcompat.widget.Toolbar
@@ -26,13 +25,14 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
         android:ems="10"
         android:hint="@string/edit_message"
         android:inputType="textPersonName"
         app:layout_constraintEnd_toStartOf="@+id/confirmInput"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteY="76dp" />
+        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
     <Button
         android:id="@+id/confirmInput"
@@ -42,12 +42,12 @@
         android:layout_marginLeft="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
-        android:onClick="sendMessage"
-        android:text="@string/button_send"
+        android:onClick="submitSolve"
+        android:text="@string/button_submit"
+        app:layout_constraintBaseline_toBaselineOf="@+id/boggleInput"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/boggleInput"
-        app:layout_constraintTop_toTopOf="@+id/boggleInput" />
+        app:layout_constraintStart_toEndOf="@+id/boggleInput" />
 
     <TextView
         android:id="@+id/wordList"
@@ -56,14 +56,12 @@
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
         android:layout_marginBottom="16dp"
         android:fontFamily="@font/cousine"
         android:scrollbars="vertical"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/downbutton"
+        app:layout_constraintEnd_toStartOf="@+id/upbutton"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/boggleInput" />
 
@@ -74,10 +72,11 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
+        android:layout_marginBottom="16dp"
         android:onClick="upSection"
         android:text="@string/up_button"
+        app:layout_constraintBottom_toTopOf="@+id/downbutton"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/confirmInput"
         app:layout_constraintTop_toBottomOf="@+id/confirmInput" />
 
     <Button
@@ -85,10 +84,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
         android:onClick="downSection"
         android:text="@string/down_button"
-        app:layout_constraintEnd_toEndOf="@+id/upbutton"
-        app:layout_constraintStart_toStartOf="@+id/upbutton"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/upbutton" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

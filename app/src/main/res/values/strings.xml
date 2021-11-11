@@ -1,13 +1,16 @@
 <resources>
     <string name="app_name">Boggle Solver</string>
-    <string name="edit_message">Enter a message</string>
-    <string name="button_send">SUBMIT</string>
+    <string name="edit_message">Enter a board</string>
+    <string name="button_submit">SUBMIT</string>
     <string name="up_button">UP</string>
     <string name="down_button">DOWN</string>
 
     <string name="settings">Settings</string>
-    <string name="favorite">Favorites</string>
     <string name="preference_file_key">BogglePreferences</string>
-    <string name="board_input_dummy">a</string>
+    <string name="dictPref">DictPref</string>
+    <string name="dictOp1">YAWL</string>
+    <string name="dictOp2">SCRABBLE</string>
+    <string name="wordOpt1" >3word</string>
+    <string name="wordOpt2">4word</string>
 
 </resources>
