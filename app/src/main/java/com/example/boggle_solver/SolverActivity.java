@@ -24,27 +24,25 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
+import androidx.constraintlayout.widget.Constraints;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
     public class SolverActivity extends AppCompatActivity {
 
-        final boolean DEBUG = true;
+        final boolean DEBUG = false;
         Map<Integer, ArrayList<Integer>> wordIds = new HashMap<>();
         int lineConst = -3; //constant for wordlist display offset
         int LIMIT_SETTING = 4; //user-defined min word length
@@ -59,8 +57,6 @@ import java.util.Map;
             setContentView(R.layout.activity_main);
 
             //init wordList
-            TextView wordList = findViewById(R.id.wordList);
-            wordList.setMovementMethod(new ScrollingMovementMethod());
 
             //init toolbar
             Toolbar myToolbar = findViewById(R.id.toolbar);
@@ -80,10 +76,9 @@ import java.util.Map;
         public void submitSolve(View view) {
 
             //initialization
-            TextView wordList = findViewById(R.id.wordList);
             StringBuilder output = new StringBuilder();
+            ConstraintLayout constraintLayout = findViewById(R.id.constraints);
 
-            wordList.scrollTo(0, 0);
 
             // Get input text
             EditText boggleInput = findViewById(R.id.boggleInput);
@@ -96,7 +91,6 @@ import java.util.Map;
             for (char c : board.toCharArray()) {
                 if ((int) c < 'A' || (int) c > 'Z') {
                     output.append("Please input letters!");
-                    wordList.setText(output);
                     return;
                 }
             }
@@ -104,12 +98,10 @@ import java.util.Map;
             double boardDim = Math.sqrt(board.length());
             if (boardDim != Math.floor(boardDim)) {
                 output.append("Please input a square board! You have only inputted ").append(board.length()).append(" letters.");
-                wordList = findViewById(R.id.wordList);
-                wordList.setText(output);
+
                 return;
             } else if (boardDim == 0 && !DEBUG) {
                 output.append("No board inputted!");
-                wordList.setText(output);
                 return;
             }
 
@@ -161,18 +153,49 @@ import java.util.Map;
             //initialize a Boggle solver with a board and a dictionary;
             Boggle boggle = new Boggle(board, LIMIT_SETTING);
             String[] boggleWords = boggle.solveBoggle(dictionary);
+            int vert_id = R.id.confirmInput;
+            int horz_id=Constraints.LayoutParams.PARENT_ID;
 
-            for (int i = 0; i < board.length(); i++) {
+            for (int i = 0; i < boardDim; i++) {
+
+                for(int j = 0; j < boardDim; j++){
+
+                    EditText cell = new EditText(this);
+                    int id = View.generateViewId();
+
+                    cell.setId(id);
+                    cell.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 60);
+                    cell.setHint(R.string.hintCell);
+//                    cell.setBackgroundColor(0xFFA1A1A1);
+                    constraintLayout.addView(cell);
+                    ConstraintLayout.LayoutParams lp = (ConstraintLayout.LayoutParams) cell.getLayoutParams();
+                    lp.width = ViewGroup.LayoutParams.WRAP_CONTENT;
+                    lp.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+                    lp.topToBottom = vert_id;
+                    lp.setMargins(10,10,10,10);
+                    if(j==0)
+                        lp.leftToLeft = Constraints.LayoutParams.PARENT_ID;
+
+                    else
+                        lp.leftToRight = horz_id;
+                    cell.requestLayout();
+
+                    horz_id=id;
+                }
+                vert_id=horz_id;
 
                 output.append(board.charAt(i)).append(" ");
                 if ((i % boardDim) == (boardDim - 1)) output.append("\n");
             }
             output.append("\n");
 
+            View sectionsScroller = findViewById(R.id.scrollWrap);
+            ConstraintLayout.LayoutParams lp = (ConstraintLayout.LayoutParams)sectionsScroller.getLayoutParams();
+            lp.topToBottom = horz_id;
+            lp.topMargin = 25;
+
             //initialize scoring and count variables
             int len = 0; //current len of words
-            int linNum = 0; //# of lines
-            int scoreIndex = 0;
             int totalScore = 0;
 
             //Starts with score for 3-letter words
@@ -183,20 +206,16 @@ import java.util.Map;
             //temp to calculate the score before writing to output.
 
             ArrayList<String> outputString = new ArrayList<>(0);
-            Map<Integer, Integer> scores = new HashMap();
 
             //length of first line. Ensures the number of newlines is correct
-            if (wordList.getWidth() <= 720) {
-                lineConst = 0;
-            }
+
 
             //create wordlist output
-            int id = R.id.sectionsScroller;
-            ConstraintLayout constraintLayout = findViewById(R.id.constraints);
+            int id = Constraints.LayoutParams.PARENT_ID;
+
             LinearLayout wordScroller = findViewById(R.id.sectionsScroller);
-            StringBuilder section = new StringBuilder();
+            wordScroller.removeAllViews();
             for (String s : boggleWords) {
-                linNum++;
 
                 if (s.length() > len) {
 
@@ -204,7 +223,6 @@ import java.util.Map;
 
                     //calculate score
                     len = s.length(); //current set of m-length words
-                    int wordCount = boggle.getCount(len);
                     int currScore;
                     if (len < 9) { //Max word length for scoring
                         currScore = scoring[len - ABS_MIN];
@@ -229,7 +247,7 @@ import java.util.Map;
                     wordScroller.addView(header);
                     ConstraintSet constraintSet = new ConstraintSet();
                     constraintSet.clone(constraintLayout);
-                    constraintSet.connect(header.getId(), ConstraintSet.TOP, id, ConstraintSet.BOTTOM, 0);
+                    constraintSet.connect(header.getId(), ConstraintSet.TOP, id, ConstraintSet.TOP, 0);
                     constraintSet.connect(header.getId(), ConstraintSet.LEFT, id, ConstraintSet.LEFT, 0);
                     constraintSet.applyTo(constraintLayout);
 
@@ -271,8 +289,6 @@ import java.util.Map;
 
             output.append("Total Score: ").append(totalScore).append("\n");
             String out = output.append(String.join("", outputString)).toString();
-            wordList.setText(out);
-            wordList.setText("String");
 
             getWordList();
         }
@@ -315,19 +331,18 @@ import java.util.Map;
         }
 
         void getWordList() {
-            TextView wordList = findViewById(R.id.wordList);
-            String searchable = wordList.getText().toString();
-            System.out.print(searchable);
-            String searchKey = "BODE";
-            if (searchable.contains(searchKey)) {
-                int index = searchable.indexOf(searchKey);
-                int lineNumber = wordList.getLayout().getLineForOffset(index);
-                SpannableString newStr = new SpannableString(searchable);
-                newStr.setSpan(new BackgroundColorSpan(Color.RED), index, index + searchKey.length(), 0);
-                wordList.setText(newStr);
-
-//            wordList.scrollTo(0,wordList.getLayout().getLineTop(lineNumber+3));
-            }
+//    //            TextView wordList = findViewById(R.id.wordList);
+//    //            String searchable = wordList.getText().toString();
+//    //            System.out.print(searchable);
+//    //            String searchKey = "BODE";
+//    //            if (searchable.contains(searchKey)) {
+//    //                int index = searchable.indexOf(searchKey);
+//    //                SpannableString newStr = new SpannableString(searchable);
+//    //                newStr.setSpan(new BackgroundColorSpan(Color.RED), index, index + searchKey.length(), 0);
+//    //                wordList.setText(newStr);
+//
+//    //            wordList.scrollTo(0,wordList.getLayout().getLineTop(lineNumber+3));
+//            }
 
 
         }
