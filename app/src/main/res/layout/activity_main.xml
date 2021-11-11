@@ -51,17 +51,17 @@
 
     <TextView
         android:id="@+id/wordList"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="276dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginTop="12dp"
         android:fontFamily="@font/cousine"
         android:scrollbars="vertical"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:text="WordList"
+        android:textSize="24sp"
         app:layout_constraintEnd_toStartOf="@+id/upbutton"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/boggleInput" />
 
@@ -90,5 +90,25 @@
         android:text="@string/down_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/upbutton" />
+
+    <TextView
+        android:id="@+id/sectionHeader"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="sectionHeader"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="@+id/wordList"
+        app:layout_constraintStart_toStartOf="@+id/wordList"
+        app:layout_constraintTop_toBottomOf="@+id/sectionDivider" />
+
+    <View
+        android:id="@+id/sectionDivider"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:background="?android:attr/listDivider"
+        app:layout_constraintBottom_toBottomOf="@+id/wordList"
+        app:layout_constraintEnd_toEndOf="@+id/wordList"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/wordList" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
