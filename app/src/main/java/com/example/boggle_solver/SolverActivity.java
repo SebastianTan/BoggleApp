@@ -11,8 +11,12 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.text.Html;
+import android.text.SpannableString;
 import android.text.method.ScrollingMovementMethod;
+import android.text.style.BackgroundColorSpan;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -226,8 +230,8 @@ public class SolverActivity extends AppCompatActivity {
         output.append("Total Score: ").append(totalScore).append("\n");
         String out = output.append(String.join("", outputString)).toString();
         wordList.setText(out);
-        System.out.print(out);
 
+        getWordList();
     }
 
     //Opens option menu
@@ -239,7 +243,25 @@ public class SolverActivity extends AppCompatActivity {
         }
         return false;
     }
+    void getWordList(){
+        TextView wordList = findViewById(R.id.wordList);
+        String searchable = wordList.getText().toString();
+        System.out.print(searchable);
+        String searchKey = "BODE";
+        if(searchable.contains(searchKey)){
+            int index = searchable.indexOf(searchKey);
+            int lineNumber = wordList.getLayout().getLineForOffset(index);
+            SpannableString newStr = new SpannableString(searchable);
+            newStr.setSpan(new BackgroundColorSpan(Color.RED),index,index+searchKey.length(),0);
+            wordList.setText(newStr);
 
+//            wordList.scrollTo(0,wordList.getLayout().getLineTop(lineNumber+3));
+        }
+
+
+
+
+    }
     // Navigation
     void openOptions() {
         Intent intent = new Intent(this, OptionsMenu.class);
