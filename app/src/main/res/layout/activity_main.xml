@@ -2,10 +2,23 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/constraints"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".SolverActivity">
 
+
+    <Button
+        android:id="@+id/confirmInput"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="140dp"
+        android:layout_marginRight="140dp"
+        android:onClick="submitSolve"
+        android:text="@string/button_submit"
+        app:layout_constraintBottom_toTopOf="@+id/wordList"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/boggleInput" />
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
@@ -22,32 +35,14 @@
     <EditText
         android:id="@+id/boggleInput"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_height="45dp"
         android:ems="10"
         android:hint="@string/edit_message"
         android:inputType="textPersonName"
-        app:layout_constraintEnd_toStartOf="@+id/confirmInput"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
-
-    <Button
-        android:id="@+id/confirmInput"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:onClick="submitSolve"
-        android:text="@string/button_submit"
-        app:layout_constraintBaseline_toBaselineOf="@+id/boggleInput"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/boggleInput" />
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteY="121dp" />
 
     <TextView
         android:id="@+id/wordList"
@@ -55,60 +50,44 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="16dp"
         android:fontFamily="@font/cousine"
         android:scrollbars="vertical"
         android:text="WordList"
         android:textSize="24sp"
-        app:layout_constraintEnd_toStartOf="@+id/upbutton"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/boggleInput" />
-
-    <Button
-        android:id="@+id/upbutton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginBottom="16dp"
-        android:onClick="upSection"
-        android:text="@string/up_button"
-        app:layout_constraintBottom_toTopOf="@+id/downbutton"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/confirmInput" />
 
-    <Button
-        android:id="@+id/downbutton"
+    <TextView
+        android:id="@+id/boardOutput"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:onClick="downSection"
-        android:text="@string/down_button"
+        android:height="30dp"
+        android:text="boardOutput"
+        app:layout_constraintBottom_toTopOf="@+id/boggleInput"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/upbutton" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
-    <TextView
-        android:id="@+id/sectionHeader"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="sectionHeader"
-        android:textSize="24sp"
-        app:layout_constraintEnd_toEndOf="@+id/wordList"
-        app:layout_constraintStart_toStartOf="@+id/wordList"
-        app:layout_constraintTop_toBottomOf="@+id/sectionDivider" />
+    <ScrollView
+        android:id="@+id/s1"
+        android:layout_width="409dp"
+        android:layout_height="468dp"
+        android:layout_marginStart="1dp"
+        android:layout_marginLeft="1dp"
+        android:layout_marginEnd="1dp"
+        android:layout_marginRight="1dp"
+        android:layout_marginBottom="2dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/wordList">
 
-    <View
-        android:id="@+id/sectionDivider"
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:background="?android:attr/listDivider"
-        app:layout_constraintBottom_toBottomOf="@+id/wordList"
-        app:layout_constraintEnd_toEndOf="@+id/wordList"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/wordList" />
+        <LinearLayout
+            android:id="@+id/sectionsScroller"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+    </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

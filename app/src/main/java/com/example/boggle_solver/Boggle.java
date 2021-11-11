@@ -157,7 +157,7 @@ public class Boggle {
 	// Gets wordcount of an m-length set of words
 	public int getCount(int len){
 		MutableInt i = score.get(len);
-		return ( i==null ) ? 0 : i.get();
+		return ( i==null ) ? -1 : i.get();
 	}
 
 	// Driver program to test above function
