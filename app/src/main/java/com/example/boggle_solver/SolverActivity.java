@@ -11,19 +11,21 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.text.SpannableString;
-import android.text.method.ScrollingMovementMethod;
-import android.text.style.BackgroundColorSpan;
+import android.text.InputFilter;
+import android.text.InputType;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -36,6 +38,7 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,9 +47,12 @@ import java.util.Map;
 
         final boolean DEBUG = false;
         Map<Integer, ArrayList<Integer>> wordIds = new HashMap<>();
-        int lineConst = -3; //constant for wordlist display offset
         int LIMIT_SETTING = 4; //user-defined min word length
         final int ABS_MIN = 3; //absolute minimum word length
+        String board = new String(new char[LIMIT_SETTING*LIMIT_SETTING]).replace("\0","*");
+
+        ArrayList<Integer> tiles = new ArrayList<>();
+
 
         @SuppressLint("ResourceType")
         @Override
@@ -56,12 +62,46 @@ import java.util.Map;
             super.onCreate(savedInstanceState);
             setContentView(R.layout.activity_main);
 
-            //init wordList
+            //
+            View parent = findViewById(R.id.parentConstraints);
+            parent.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                }
+            });
 
             //init toolbar
-            Toolbar myToolbar = findViewById(R.id.toolbar);
+            Toolbar myToolbar = findViewById(R.id.mainToolbar);
             myToolbar.inflateMenu(R.menu.menu);
             setSupportActionBar(myToolbar);
+
+            //init spinner
+            Spinner spinner = findViewById(R.id.dimSpinner);
+            ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                    R.array.spinnerOps, android.R.layout.simple_spinner_item);
+            // Specify the layout to use when the list of choices appears
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
+
+                    String option = adapterView.getItemAtPosition(position).toString();
+                    LIMIT_SETTING=Integer.parseInt(option.substring(0,1));
+                    makeBoard();
+
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> adapterView) {
+
+                }
+            });
+            // Apply the adapter to the spinner
+            spinner.setAdapter(adapter);
+            spinner.measure(spinner.getWidth(),spinner.getHeight());
+            spinner.getLayoutParams().width = (int) (spinner.getMeasuredWidth() * 1.25);
 
         }
 
@@ -74,34 +114,45 @@ import java.util.Map;
 
         // Runs on button press and prints solution to boggle board
         public void submitSolve(View view) {
-
             //initialization
             StringBuilder output = new StringBuilder();
-            ConstraintLayout constraintLayout = findViewById(R.id.constraints);
+            ConstraintLayout parentConstraints = findViewById(R.id.parentConstraints);
 
 
             // Get input text
-            EditText boggleInput = findViewById(R.id.boggleInput);
-            String board = boggleInput.getText().toString();
+//            EditText boggleInput = findViewById(R.id.lineInput);
+//            String board = boggleInput.getText().toString();
+            char [] boardChars = board.toCharArray();
+            for(int i = 0; i < tiles.size() ; i++ ){
+                TextView et = findViewById(tiles.get(i));
+                String tileString = et.getText().toString();
+                if(tileString.length() != 0)
+                    boardChars[i] = tileString.charAt(0);
+                else{
+                    makeErrorView("Missing letter!");
+                    return;
+                }
+
+            }
+            board = String.valueOf(boardChars);
 
 
             //Error check input text
-
             board = board.toUpperCase();
             for (char c : board.toCharArray()) {
                 if ((int) c < 'A' || (int) c > 'Z') {
-                    output.append("Please input letters!");
+                    makeErrorView("Please input letters!");
                     return;
                 }
             }
 
             double boardDim = Math.sqrt(board.length());
             if (boardDim != Math.floor(boardDim)) {
-                output.append("Please input a square board! You have only inputted ").append(board.length()).append(" letters.");
+                makeErrorView("Please input a square board! You have only inputted ");
 
                 return;
             } else if (boardDim == 0 && !DEBUG) {
-                output.append("No board inputted!");
+                makeErrorView("No board inputted!");
                 return;
             }
 
@@ -153,50 +204,15 @@ import java.util.Map;
             //initialize a Boggle solver with a board and a dictionary;
             Boggle boggle = new Boggle(board, LIMIT_SETTING);
             String[] boggleWords = boggle.solveBoggle(dictionary);
-            int vert_id = R.id.confirmInput;
-            int horz_id=Constraints.LayoutParams.PARENT_ID;
 
-            for (int i = 0; i < boardDim; i++) {
-
-                for(int j = 0; j < boardDim; j++){
-
-                    EditText cell = new EditText(this);
-                    int id = View.generateViewId();
-
-                    cell.setId(id);
-                    cell.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 60);
-                    cell.setHint(R.string.hintCell);
-//                    cell.setBackgroundColor(0xFFA1A1A1);
-                    constraintLayout.addView(cell);
-                    ConstraintLayout.LayoutParams lp = (ConstraintLayout.LayoutParams) cell.getLayoutParams();
-                    lp.width = ViewGroup.LayoutParams.WRAP_CONTENT;
-                    lp.height = ViewGroup.LayoutParams.WRAP_CONTENT;
-                    lp.topToBottom = vert_id;
-                    lp.setMargins(10,10,10,10);
-                    if(j==0)
-                        lp.leftToLeft = Constraints.LayoutParams.PARENT_ID;
-
-                    else
-                        lp.leftToRight = horz_id;
-                    cell.requestLayout();
-
-                    horz_id=id;
-                }
-                vert_id=horz_id;
-
-                output.append(board.charAt(i)).append(" ");
-                if ((i % boardDim) == (boardDim - 1)) output.append("\n");
-            }
             output.append("\n");
 
-            View sectionsScroller = findViewById(R.id.scrollWrap);
+            View sectionsScroller = findViewById(R.id.wordListWrap);
             ConstraintLayout.LayoutParams lp = (ConstraintLayout.LayoutParams)sectionsScroller.getLayoutParams();
-            lp.topToBottom = horz_id;
             lp.topMargin = 25;
 
             //initialize scoring and count variables
             int len = 0; //current len of words
-            int totalScore = 0;
 
             //Starts with score for 3-letter words
 //        LinkedList<Integer> scoring = new LinkedList<>(Arrays.asList(11,5,3,2,1,1));
@@ -205,21 +221,20 @@ import java.util.Map;
 
             //temp to calculate the score before writing to output.
 
-            ArrayList<String> outputString = new ArrayList<>(0);
-
             //length of first line. Ensures the number of newlines is correct
 
 
             //create wordlist output
             int id = Constraints.LayoutParams.PARENT_ID;
+            int currId = 0; //Careful
 
-            LinearLayout wordScroller = findViewById(R.id.sectionsScroller);
+            LinearLayout wordScroller = findViewById(R.id.wordListLayout);
             wordScroller.removeAllViews();
+
+            ConstraintSet constraintSet = new ConstraintSet();
             for (String s : boggleWords) {
 
                 if (s.length() > len) {
-
-                    wordIds.put(s.length(), new ArrayList<>());
 
                     //calculate score
                     len = s.length(); //current set of m-length words
@@ -232,8 +247,8 @@ import java.util.Map;
 
                     //Generate TextView Header
                     TextView header = new TextView(this);
-                    int newId = View.generateViewId();
-                    header.setId(newId);
+                    int headerId = View.generateViewId();
+                    header.setId(headerId);
                     header.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 24);
                     header.setBackgroundColor(0xFFA1A1A1);
                     header.setText(String.format("%d-letter words %d points", len, currScore * len));
@@ -245,22 +260,25 @@ import java.util.Map;
                             ViewGroup.LayoutParams.WRAP_CONTENT
                     ));
                     wordScroller.addView(header);
-                    ConstraintSet constraintSet = new ConstraintSet();
-                    constraintSet.clone(constraintLayout);
+
+                    header.setOnClickListener(this::hideView);
+
+                    constraintSet.clone(parentConstraints);
                     constraintSet.connect(header.getId(), ConstraintSet.TOP, id, ConstraintSet.TOP, 0);
                     constraintSet.connect(header.getId(), ConstraintSet.LEFT, id, ConstraintSet.LEFT, 0);
-                    constraintSet.applyTo(constraintLayout);
+                    constraintSet.applyTo(parentConstraints);
 
+                    wordIds.put(headerId, new ArrayList<>());
+                    currId=headerId;
 
                     //Make Divider
-                    id = makeDivider(wordScroller, newId);
-
+                    id = makeDivider(wordScroller, headerId);
                 }
 
                 //Generate wordList Entry
                 TextView sectionWords = new TextView(this);
-                int newId = View.generateViewId();
-                sectionWords.setId(newId);
+                int wordEntryId = View.generateViewId();
+                sectionWords.setId(wordEntryId);
                 sectionWords.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 24);
 //                sectionWords.setBackgroundColor(0xFFA1A1A1);
                 sectionWords.setGravity(Gravity.CENTER_VERTICAL);
@@ -273,35 +291,129 @@ import java.util.Map;
                 ));
                 wordScroller.addView(sectionWords);
 
-
-                ConstraintSet constraintSet = new ConstraintSet();
-                constraintSet.clone(constraintLayout);
+                constraintSet.clone(parentConstraints);
                 constraintSet.connect(sectionWords.getId(), ConstraintSet.TOP, id, ConstraintSet.BOTTOM, 0);
                 constraintSet.connect(sectionWords.getId(), ConstraintSet.LEFT, id, ConstraintSet.LEFT, 0);
-                constraintSet.applyTo(constraintLayout);
+                constraintSet.applyTo(parentConstraints);
 
-                id = makeDivider(wordScroller, newId);
+                wordIds.get(currId).add(wordEntryId);
+                id = makeDivider(wordScroller, wordEntryId);
+                wordIds.get(currId).add(id);
 
-                wordIds.get(len).add(id);
+
 //            section.append(s + "\n");
             }
-
-
-            output.append("Total Score: ").append(totalScore).append("\n");
-            String out = output.append(String.join("", outputString)).toString();
-
             getWordList();
         }
 
-        public void hideView(View view) {
-            if ((view.getVisibility() == View.INVISIBLE)) {
-                view.setVisibility(View.VISIBLE);
-            } else {
-                view.setVisibility(View.INVISIBLE);
+        void makeBoard(){
+
+            int vert_id = R.id.dimSpinner;
+            int horz_id = Constraints.LayoutParams.PARENT_ID;
+
+            ConstraintLayout boardContainer = findViewById(R.id.boardContainer);
+            boardContainer.removeAllViews();
+            ConstraintSet constraintSet = new ConstraintSet();
+
+            for (int i = 0; i < LIMIT_SETTING; i++) {
+                int[]chainIds = new int[LIMIT_SETTING];
+                for(int j = 0; j < LIMIT_SETTING; j++){
+
+                    EditText cell = new EditText(this);
+                    EditText lastCell = findViewById(horz_id);
+                    int id = View.generateViewId();
+                    chainIds[j]=id;
+                    cell.setId(id);
+                    tiles.add(id);
+
+                    cell.setOnFocusChangeListener(new View.OnFocusChangeListener(){
+                        @Override
+                        public void onFocusChange(View v, boolean hasFocus){
+                            EditText e = (EditText)v;
+                            if(e.getText().toString().length() == 1){
+                                e.setCursorVisible(false);
+                            }
+                        }
+
+                    });
+
+                    if(lastCell != null) lastCell.setNextFocusDownId(id);
+                    cell.setFilters(new InputFilter[] {new InputFilter.LengthFilter(1)});
+                    cell.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 35);
+                    cell.setHint(R.string.hintCell);
+                    cell.setInputType(InputType.TYPE_TEXT_VARIATION_PERSON_NAME);
+                    cell.setBackgroundColor(getResources().getColor(R.color.gray));
+                    cell.setPadding(10,10,10,10);
+                    cell.setGravity(Gravity.CENTER);
+                    boardContainer.addView(cell);
+                    ConstraintLayout.LayoutParams lp = (ConstraintLayout.LayoutParams) cell.getLayoutParams();
+
+                    lp.width = 0;
+                    lp.height = ConstraintSet.WRAP_CONTENT;
+
+                    constraintSet.clone(boardContainer);
+                    constraintSet.setDimensionRatio(id, "W, 1:1");
+
+                    constraintSet.connect(id, ConstraintSet.TOP, vert_id, ConstraintSet.BOTTOM, 10);
+
+                    constraintSet.setMargin(id,ConstraintSet.START,10);
+
+                    constraintSet.applyTo(boardContainer);
+                    horz_id=id;
+
+                    cell.requestLayout();
+                    boardContainer.requestLayout();
+
+                    cell.addOnLayoutChangeListener((v, left, top, right, bottom, leftWas, topWas, rightWas, bottomWas) -> {
+                        int widthWas = rightWas - leftWas; // Right exclusive, left inclusive
+                        if (widthWas < v.getWidth()) {
+
+                            lp.width = v.getWidth();
+                            lp.height = v.getWidth();
+
+                        }
+                    }
+                    );
+                }
+                float[]weights = new float[LIMIT_SETTING];
+                Arrays.fill(weights, (float) 1 / LIMIT_SETTING);
+                constraintSet.clone(boardContainer);
+                constraintSet.createHorizontalChain(
+                        ConstraintSet.PARENT_ID, ConstraintSet.LEFT,
+                        ConstraintSet.PARENT_ID, ConstraintSet.RIGHT,
+                        chainIds,
+                        weights,
+                        ConstraintSet.CHAIN_PACKED
+
+                        );
+//                constraintSet.connect(horz_id, ConstraintSet.RIGHT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT, 0);
+                constraintSet.applyTo(boardContainer);
+                vert_id=horz_id;
             }
+
+//            for(int i = 0; i < numChildren; i++) boardContainer.removeViewAt(0);
+        }
+        public void clearBoard(View v) {
+            tiles.forEach((viewId) -> {
+                TextView view = findViewById(viewId);
+                view.setText(null);
+            });
         }
 
-        public int makeDivider(LinearLayout l, int lastId) {
+
+        void hideView(View view) {
+            for(int id : wordIds.get(view.getId())){
+                View v = findViewById(id);
+                if ((v.getVisibility() == View.GONE)) {
+                    v.setVisibility(View.VISIBLE);
+                } else {
+                    v.setVisibility(View.GONE);
+                }
+            }
+
+        }
+
+        int makeDivider(LinearLayout l, int lastId) {
             View divider = new View(this);
             int retId = View.generateViewId();
             divider.setId(retId);
@@ -312,11 +424,11 @@ import java.util.Map;
             divider.setBackgroundColor(getResources().getColor(R.color.black));
             l.addView(divider);
 
-            ConstraintLayout constraintLayout = findViewById(R.id.constraints);
+            ConstraintLayout parentConstraints = findViewById(R.id.parentConstraints);
             ConstraintSet constraintSet = new ConstraintSet();
-            constraintSet.clone(constraintLayout);
+            constraintSet.clone(parentConstraints);
             constraintSet.connect(retId, ConstraintSet.TOP, lastId, ConstraintSet.BOTTOM, 0);
-            constraintSet.applyTo(constraintLayout);
+            constraintSet.applyTo(parentConstraints);
             return retId;
         }
 
@@ -328,6 +440,15 @@ import java.util.Map;
                 return true;
             }
             return false;
+        }
+
+        void makeErrorView(String s){
+            LinearLayout wll = findViewById(R.id.wordListLayout);
+            wll.removeAllViews();
+            TextView tv = new TextView(this);
+            tv.setText(s);
+            tv.setTextSize(24);
+            wll.addView(tv);
         }
 
         void getWordList() {
@@ -354,38 +475,3 @@ import java.util.Map;
         }
     }
 
-//    //Wrapper to move up a wordlist section
-//    public void upSection(View view){
-//
-////        toSection(true);
-//    }
-//
-//    //Wrapper to move down a wordlist section
-//    public void downSection(View view){
-//
-////        toSection(false);
-//    }
-//
-//    // Performs logic to move sections
-//    void toSection(boolean up) {
-//
-//        TextView textView = findViewById(R.id.wordList);
-//        ArrayList<Integer> localSections = new ArrayList<>(sectionHeaders);
-//        if(up) {
-//            Collections.reverse(localSections);
-//        }
-//
-//        int pos=0;
-//        for(int sections : localSections) {
-//            pos = textView.getLayout().getLineTop(sections);
-//            //down
-//            if(!up && pos > textView.getScrollY()) {
-//                break;
-//
-//            } else if (up && pos < textView.getScrollY()){ //up
-//                break;
-//            }
-//        }
-//        textView.scrollTo(0,pos);
-//    }
-//}

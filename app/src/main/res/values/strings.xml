@@ -2,6 +2,7 @@
     <string name="app_name">Boggle Solver</string>
     <string name="edit_message">Enter a board</string>
     <string name="button_submit">SUBMIT</string>
+    <string name="button_clear">CLEAR</string>
     <string name="up_button">UP</string>
     <string name="down_button">DOWN</string>
 
@@ -10,8 +11,13 @@
     <string name="dictPref">DictPref</string>
     <string name="dictOp1">YAWL</string>
     <string name="dictOp2">SCRABBLE</string>
-    <string name="wordOpt1" >3word</string>
+    <string name="wordOpt1">3word</string>
     <string name="wordOpt2">4word</string>
     <string name="hintCell">A</string>
 
+    <string-array name="spinnerOps">
+        <item>4x4</item>
+        <item>5x5</item>
+        <item>6x6</item>
+    </string-array>
 </resources>
