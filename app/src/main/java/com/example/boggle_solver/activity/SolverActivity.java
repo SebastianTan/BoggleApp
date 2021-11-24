@@ -5,7 +5,8 @@
 //doesn't handle sparse boards well (skipped sections)
 
 
-package com.example.boggle_solver;
+package com.example.boggle_solver.activity;
+
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -33,6 +34,10 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.constraintlayout.widget.Constraints;
+
+import com.example.boggle_solver.Boggle;
+import com.example.boggle_solver.R;
+import com.example.boggle_solver.util.Utils;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -129,7 +134,7 @@ import java.util.Map;
                 if(tileString.length() != 0)
                     boardChars[i] = tileString.charAt(0);
                 else{
-                    makeErrorView("Missing letter!");
+                    makeErrorView(getString(R.string.error_missing_letter));
                     return;
                 }
 
@@ -141,14 +146,14 @@ import java.util.Map;
             board = board.toUpperCase();
             for (char c : board.toCharArray()) {
                 if ((int) c < 'A' || (int) c > 'Z') {
-                    makeErrorView("Please input letters!");
+                    makeErrorView(getString(R.string.error_invalid_char));
                     return;
                 }
             }
 
             double boardDim = Math.sqrt(board.length());
             if (boardDim != Math.floor(boardDim)) {
-                makeErrorView("Please input a square board! You have only inputted ");
+                makeErrorView(getString(R.string.error_small_board));
 
                 return;
             } else if (boardDim == 0 && !DEBUG) {
@@ -436,8 +441,12 @@ import java.util.Map;
         @Override
         public boolean onOptionsItemSelected(MenuItem item) {
             if (item.getItemId() == R.id.action_settings) {
-                openOptions();
+                Utils.changeActivity(this,OptionsMenu.class);
                 return true;
+            }
+            if(item.getItemId() == R.id.add_word) {
+                Utils.changeActivity(this, AddWord.class);
+                                return true;
             }
             return false;
         }
@@ -469,9 +478,6 @@ import java.util.Map;
         }
 
         // Navigation
-        void openOptions() {
-            Intent intent = new Intent(this, OptionsMenu.class);
-            startActivity(intent);
-        }
+
     }
 

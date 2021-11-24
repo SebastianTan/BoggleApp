@@ -7,5 +7,11 @@
         android:icon="@drawable/ic_baseline_settings_24"
         android:title="@string/settings"
         app:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/add_word"
+        android:icon="@drawable/ic_baseline_save_24"
+        android:title="Add Word"
+        app:showAsAction="ifRoom"
+        />
 
 </menu>

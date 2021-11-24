@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+
+    android:id="@+id/addWordParent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activity.AddWord">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/wordToolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        app:title="Custom Dictionary"
+        app:titleTextColor="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/addWordInput"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="add word"
+        android:textColor="@color/black"
+        android:inputType="textPersonName"
+        android:maxLength="16"
+        android:minWidth = "120dp"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintTop_toBottomOf="@id/wordToolbar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/confirmWordInput"
+
+
+        >
+
+    </EditText>
+    <TextView
+
+        android:id="@+id/confirmWordInput"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="+"
+        android:textSize="34sp"
+        android:textColor="@color/black"
+        android:gravity="center"
+        app:layout_constraintTop_toBottomOf="@id/wordToolbar"
+        app:layout_constraintStart_toEndOf="@id/addWordInput"
+        app:layout_constraintEnd_toEndOf="parent">
+    </TextView>
+</androidx.constraintlayout.widget.ConstraintLayout>

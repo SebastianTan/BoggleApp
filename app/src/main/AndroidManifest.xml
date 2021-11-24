@@ -9,7 +9,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication">
-        <activity android:name=".SolverActivity">
+        <activity android:name=".activity.AddWord"></activity>
+        <activity android:name=".activity.SolverActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -17,11 +18,11 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".OptionsMenu"
-            android:parentActivityName=".SolverActivity">
+            android:name=".activity.OptionsMenu"
+            android:parentActivityName=".activity.SolverActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".SolverActivity" />
+                android:value=".activity.SolverActivity" />
         </activity>
 
         <meta-data

@@ -1,4 +1,4 @@
-package com.example.boggle_solver;
+package com.example.boggle_solver.activity;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -10,6 +10,8 @@ import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+
+import com.example.boggle_solver.R;
 
 
 public class OptionsMenu extends AppCompatActivity {
@@ -54,7 +56,7 @@ public class OptionsMenu extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.settings) {
+        if (item.getItemId() == R.id.back) {
             finish();
             return true;
         }

@@ -5,7 +5,9 @@
     <string name="button_clear">CLEAR</string>
     <string name="up_button">UP</string>
     <string name="down_button">DOWN</string>
-
+    <string name="error_missing_letter">Missing letter!</string>
+    <string name="error_invalid_char">Please input letters!</string>
+    <string name="error_small_board">Please input a square board! You have only inputted FIX TEXT</string>
     <string name="settings">Settings</string>
     <string name="preference_file_key">BogglePreferences</string>
     <string name="dictPref">DictPref</string>
