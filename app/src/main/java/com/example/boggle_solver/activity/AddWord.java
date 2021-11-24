@@ -94,6 +94,7 @@ public class AddWord extends AppCompatActivity {
         } catch (IOException e){
             System.err.println("File write failed");
         }
+        et.setText("");
         addWordView(word);
     }
 
