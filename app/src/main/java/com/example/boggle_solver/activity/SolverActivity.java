@@ -13,10 +13,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.InputFilter;
 import android.text.InputType;
+import android.text.TextWatcher;
 import android.util.TypedValue;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -54,6 +57,8 @@ import java.util.Map;
         Map<Integer, ArrayList<Integer>> wordIds = new HashMap<>();
         int LIMIT_SETTING = 4; //user-defined min word length
         final int ABS_MIN = 3; //absolute minimum word length
+
+        long delayContinue = 0;
         String board = new String(new char[LIMIT_SETTING*LIMIT_SETTING]).replace("\0","*");
 
         ArrayList<Integer> tiles = new ArrayList<>();
@@ -311,6 +316,7 @@ import java.util.Map;
             getWordList();
         }
 
+        //create the input board
         void makeBoard(){
 
             int vert_id = R.id.dimSpinner;
@@ -341,8 +347,68 @@ import java.util.Map;
                         }
 
                     });
+                    cell.setOnKeyListener(new View.OnKeyListener() {
+                        @Override
+                        public boolean onKey(View view, int keyCode, KeyEvent keyEvent) {
+                            EditText et = (EditText) view;
+                            if(keyCode == KeyEvent.KEYCODE_DEL) {
+                                    View prev = et.focusSearch(View.FOCUS_LEFT);
+                                    prev.requestFocus();
+                                    return false;
+                            }
+                            return false;
+                        }
+                    });
+                    cell.addTextChangedListener(new TextWatcher() {
+                        @Override
+                        public void beforeTextChanged(CharSequence charSequence, int i, int currLen, int afterLen) {
 
-                    if(lastCell != null) lastCell.setNextFocusDownId(id);
+                        }
+
+                        @Override
+                        public void onTextChanged(CharSequence charSequence, int i, int beforeLen, int currLen) {
+
+                            System.out.println("focus");
+                            EditText et;
+                            if (System.currentTimeMillis() - delayContinue < 500) {
+                                return;
+                            }
+
+                            try{
+                                et = (EditText)getCurrentFocus();
+                            }
+                            catch (Exception e){
+                                return;
+                            }
+                            if(et != null ){
+
+
+
+                                if(et.length() == 0){
+
+                                }
+                                View next = et.focusSearch(View.FOCUS_RIGHT);
+                                if(next != null && et.length() == 1){
+                                    next.requestFocus();
+                                    delayContinue = System.currentTimeMillis();
+                                }
+
+
+                            }
+                        }
+
+                        @Override
+                        public void afterTextChanged(Editable editable) {
+
+                        }
+                    });
+
+                    // Set focus ID
+                    if(lastCell != null) {
+                        lastCell.setNextFocusDownId(id);
+                        lastCell.setNextFocusRightId(id);
+                        cell.setNextFocusLeftId(horz_id);
+                    }
                     cell.setFilters(new InputFilter[] {new InputFilter.LengthFilter(1)});
                     cell.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 35);
                     cell.setHint(R.string.hintCell);
@@ -380,6 +446,8 @@ import java.util.Map;
                     }
                     );
                 }
+
+                //create a horizontal chain
                 float[]weights = new float[LIMIT_SETTING];
                 Arrays.fill(weights, (float) 1 / LIMIT_SETTING);
                 constraintSet.clone(boardContainer);
