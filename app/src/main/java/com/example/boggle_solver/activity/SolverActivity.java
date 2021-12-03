@@ -54,9 +54,11 @@ import java.util.Map;
     public class SolverActivity extends AppCompatActivity {
 
         final boolean DEBUG = false;
+        final boolean DEBUG2 = true;
         Map<Integer, ArrayList<Integer>> wordIds = new HashMap<>();
         int LIMIT_SETTING = 4; //user-defined min word length
         final int ABS_MIN = 3; //absolute minimum word length
+        final int DELAY_CONST = 0;
 
         long delayContinue = 0;
         String board = new String(new char[LIMIT_SETTING*LIMIT_SETTING]).replace("\0","*");
@@ -86,6 +88,11 @@ import java.util.Map;
             Toolbar myToolbar = findViewById(R.id.mainToolbar);
             myToolbar.inflateMenu(R.menu.menu);
             setSupportActionBar(myToolbar);
+
+            //init board input
+
+            View boardInput = findViewById(R.id.lineInput);
+            boardInput.setVisibility(View.GONE);
 
             //init spinner
             Spinner spinner = findViewById(R.id.dimSpinner);
@@ -341,7 +348,7 @@ import java.util.Map;
                         @Override
                         public void onFocusChange(View v, boolean hasFocus){
                             EditText e = (EditText)v;
-                            if(e.getText().toString().length() == 1){
+                            if(e.getText().toString().length() == 1 && DEBUG2 == false){
                                 e.setCursorVisible(false);
                             }
                         }
@@ -350,11 +357,17 @@ import java.util.Map;
                     cell.setOnKeyListener(new View.OnKeyListener() {
                         @Override
                         public boolean onKey(View view, int keyCode, KeyEvent keyEvent) {
+                            System.out.println(keyEvent.getFlags());
                             EditText et = (EditText) view;
-                            if(keyCode == KeyEvent.KEYCODE_DEL) {
+                            boolean delayOver = (System.currentTimeMillis() - delayContinue > DELAY_CONST);
+                            if(keyCode == KeyEvent.KEYCODE_DEL && delayOver
+                                    && keyEvent.getAction() == KeyEvent.ACTION_DOWN
+                                    && et.length() == 0) {
                                     View prev = et.focusSearch(View.FOCUS_LEFT);
+                                    if(prev == null) return false;
                                     prev.requestFocus();
-                                    return false;
+                                    delayContinue = System.currentTimeMillis();
+                                    return true;
                             }
                             return false;
                         }
@@ -368,11 +381,7 @@ import java.util.Map;
                         @Override
                         public void onTextChanged(CharSequence charSequence, int i, int beforeLen, int currLen) {
 
-                            System.out.println("focus");
                             EditText et;
-                            if (System.currentTimeMillis() - delayContinue < 500) {
-                                return;
-                            }
 
                             try{
                                 et = (EditText)getCurrentFocus();
@@ -381,19 +390,10 @@ import java.util.Map;
                                 return;
                             }
                             if(et != null ){
-
-
-
-                                if(et.length() == 0){
-
-                                }
                                 View next = et.focusSearch(View.FOCUS_RIGHT);
                                 if(next != null && et.length() == 1){
                                     next.requestFocus();
-                                    delayContinue = System.currentTimeMillis();
                                 }
-
-
                             }
                         }
 
