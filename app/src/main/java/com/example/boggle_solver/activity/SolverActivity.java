@@ -47,9 +47,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -59,7 +57,6 @@ import java.util.TreeSet;
         final boolean DEBUG_PERM_CURSOR = true;
         Map<Integer, ArrayList<Integer>> wordIds = new HashMap<>();
         int LIMIT_SETTING = 4; //user-defined min word length
-        final int ABS_MIN = 3; //absolute minimum word length
         final int DELAY_CONST = 0;
 
         long delayContinue = 0;
@@ -78,12 +75,9 @@ import java.util.TreeSet;
 
             //
             View parent = findViewById(R.id.parentConstraints);
-            parent.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-                }
+            parent.setOnClickListener(view -> {
+                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
             });
 
             //init toolbar
@@ -141,7 +135,7 @@ import java.util.TreeSet;
             // Get input text
 //            EditText boggleInput = findViewById(R.id.lineInput);
 //            String board = boggleInput.getText().toString();
-            double boardDim = Math.sqrt(board.length());
+            double boardDim;
             if(!DEBUG_INPUT) {
                 char[] boardChars = board.toCharArray();
                 for (int i = 0; i < tiles.size(); i++) {
@@ -255,12 +249,14 @@ import java.util.TreeSet;
 
                     //calculate score
                     len = s.length(); //current set of m-length words
-                    int currScore;
-                    if (len < 9) { //Max word length for scoring
-                        currScore = scoring[len - ABS_MIN];
-                    } else {
-                        currScore = scoring[scoring.length - 1] + (len - 8) * 2;
-                    }
+
+                    //scoring code
+//                    int currScore;
+//                    if (len < 9) { //Max word length for scoring
+//                        currScore = scoring[len - ABS_MIN];
+//                    } else {
+//                        currScore = scoring[scoring.length - 1] + (len - 8) * 2;
+//                    }
 
                     //Generate TextView Header
                     TextView header = new TextView(this);
@@ -346,33 +342,26 @@ import java.util.TreeSet;
                     cell.setId(id);
                     tiles.add(id);
 
-                    cell.setOnFocusChangeListener(new View.OnFocusChangeListener(){
-                        @Override
-                        public void onFocusChange(View v, boolean hasFocus){
-                            EditText e = (EditText)v;
-                            if(e.getText().toString().length() == 1 && DEBUG_PERM_CURSOR == false){
-                                e.setCursorVisible(false);
-                            }
+                    cell.setOnFocusChangeListener((v, hasFocus) -> {
+                        EditText e = (EditText)v;
+                        if(e.getText().toString().length() == 1 && !DEBUG_PERM_CURSOR){
+                            e.setCursorVisible(false);
                         }
-
                     });
-                    cell.setOnKeyListener(new View.OnKeyListener() {
-                        @Override
-                        public boolean onKey(View view, int keyCode, KeyEvent keyEvent) {
-                            System.out.println(keyEvent.getFlags());
-                            EditText et = (EditText) view;
-                            boolean delayOver = (System.currentTimeMillis() - delayContinue > DELAY_CONST);
-                            if(keyCode == KeyEvent.KEYCODE_DEL && delayOver
-                                    && keyEvent.getAction() == KeyEvent.ACTION_DOWN
-                                    && et.length() == 0) {
-                                    View prev = et.focusSearch(View.FOCUS_LEFT);
-                                    if(prev == null) return false;
-                                    prev.requestFocus();
-                                    delayContinue = System.currentTimeMillis();
-                                    return true;
-                            }
-                            return false;
+                    cell.setOnKeyListener((view, keyCode, keyEvent) -> {
+                        System.out.println(keyEvent.getFlags());
+                        EditText et = (EditText) view;
+                        boolean delayOver = (System.currentTimeMillis() - delayContinue > DELAY_CONST);
+                        if(keyCode == KeyEvent.KEYCODE_DEL && delayOver
+                                && keyEvent.getAction() == KeyEvent.ACTION_DOWN
+                                && et.length() == 0) {
+                                View prev = et.focusSearch(View.FOCUS_LEFT);
+                                if(prev == null) return false;
+                                prev.requestFocus();
+                                delayContinue = System.currentTimeMillis();
+                                return true;
                         }
+                        return false;
                     });
                     cell.addTextChangedListener(new TextWatcher() {
                         @Override
@@ -478,7 +467,6 @@ import java.util.TreeSet;
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                return;
             }
         }
         public void clearBoard(View v) {
