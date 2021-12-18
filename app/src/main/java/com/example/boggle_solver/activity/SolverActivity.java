@@ -10,7 +10,6 @@ package com.example.boggle_solver.activity;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
@@ -50,11 +49,14 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
     public class SolverActivity extends AppCompatActivity {
 
-        final boolean DEBUG = false;
-        final boolean DEBUG2 = true;
+        final boolean DEBUG_INPUT = true;
+        final boolean DEBUG_PERM_CURSOR = true;
         Map<Integer, ArrayList<Integer>> wordIds = new HashMap<>();
         int LIMIT_SETTING = 4; //user-defined min word length
         final int ABS_MIN = 3; //absolute minimum word length
@@ -139,20 +141,26 @@ import java.util.Map;
             // Get input text
 //            EditText boggleInput = findViewById(R.id.lineInput);
 //            String board = boggleInput.getText().toString();
-            char [] boardChars = board.toCharArray();
-            for(int i = 0; i < tiles.size() ; i++ ){
-                TextView et = findViewById(tiles.get(i));
-                String tileString = et.getText().toString();
-                if(tileString.length() != 0)
-                    boardChars[i] = tileString.charAt(0);
-                else{
-                    makeErrorView(getString(R.string.error_missing_letter));
-                    return;
+            double boardDim = Math.sqrt(board.length());
+            if(!DEBUG_INPUT) {
+                char[] boardChars = board.toCharArray();
+                for (int i = 0; i < tiles.size(); i++) {
+                    TextView et = findViewById(tiles.get(i));
+                    String tileString = et.getText().toString();
+                    if (tileString.length() != 0)
+                        boardChars[i] = tileString.charAt(0);
+                    else {
+                        makeErrorView(getString(R.string.error_missing_letter));
+                        return;
+                    }
                 }
+                board = String.valueOf(boardChars);
+            } else {
+                // "LILEROHTOPENZOIA" "LCTCWHTEOEIRBSHI" Debug strings
+                //testing code
 
+                board = "EDUUHEIOFTTSRBRMENNOEHIER";
             }
-            board = String.valueOf(boardChars);
-
 
             //Error check input text
             board = board.toUpperCase();
@@ -163,15 +171,16 @@ import java.util.Map;
                 }
             }
 
-            double boardDim = Math.sqrt(board.length());
+            boardDim = Math.sqrt(board.length());
             if (boardDim != Math.floor(boardDim)) {
                 makeErrorView(getString(R.string.error_small_board));
 
                 return;
-            } else if (boardDim == 0 && !DEBUG) {
+            } else if (boardDim == 0 && !DEBUG_INPUT) {
                 makeErrorView("No board inputted!");
                 return;
             }
+
 
 
             //initialize user-settings
@@ -197,25 +206,17 @@ import java.util.Map;
             String[] dictionary;
 
             InputStream is = this.getResources().openRawResource(dictIndex);
-            BufferedReader br = new BufferedReader(new InputStreamReader(is));
-            List<String> dict = new ArrayList<>();
-            String data;
-            try {
-                while ((data = br.readLine()) != null) {
-                    dict.add(data);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                return;
+            SortedSet<String> dict = new TreeSet<>();
+            importDict(is, dict);
+            try{
+                is = this.openFileInput(getString(R.string.customInputFile));
+            } catch(Exception e){
+                makeErrorView("File not found");
             }
+            importDict(is, dict);
             dictionary = dict.toArray(new String[0]);
 
-            // "LILEROHTOPENZOIA" "LCTCWHTEOEIRBSHI" Debug strings
-            //testing code
-            if (DEBUG) {
-                board = "EDUUHEIOFTTSRBRMENNOEHIER";
-                boardDim = Math.sqrt(board.length());
-            }
+
 
 
             //initialize a Boggle solver with a board and a dictionary;
@@ -250,7 +251,6 @@ import java.util.Map;
 
             ConstraintSet constraintSet = new ConstraintSet();
             for (String s : boggleWords) {
-
                 if (s.length() > len) {
 
                     //calculate score
@@ -268,7 +268,9 @@ import java.util.Map;
                     header.setId(headerId);
                     header.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 24);
                     header.setBackgroundColor(0xFFA1A1A1);
-                    header.setText(String.format("%d-letter words %d points", len, currScore * len));
+
+                    // getCount gets word count of n-length words from search
+                    header.setText(String.format("%d-letter words %d points", len, boggle.getCount(len)));
                     header.setGravity(Gravity.CENTER);
                     header.setPadding(0, 10, 0, 10);
 
@@ -348,7 +350,7 @@ import java.util.Map;
                         @Override
                         public void onFocusChange(View v, boolean hasFocus){
                             EditText e = (EditText)v;
-                            if(e.getText().toString().length() == 1 && DEBUG2 == false){
+                            if(e.getText().toString().length() == 1 && DEBUG_PERM_CURSOR == false){
                                 e.setCursorVisible(false);
                             }
                         }
@@ -465,6 +467,19 @@ import java.util.Map;
             }
 
 //            for(int i = 0; i < numChildren; i++) boardContainer.removeViewAt(0);
+        }
+
+        void importDict(InputStream is, SortedSet<String> dict){
+            BufferedReader br = new BufferedReader(new InputStreamReader(is));
+            String data;
+            try {
+                while ((data = br.readLine()) != null) {
+                    dict.add(data);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                return;
+            }
         }
         public void clearBoard(View v) {
             tiles.forEach((viewId) -> {

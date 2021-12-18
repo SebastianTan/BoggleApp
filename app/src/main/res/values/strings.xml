@@ -16,6 +16,7 @@
     <string name="wordOpt1">3word</string>
     <string name="wordOpt2">4word</string>
     <string name="hintCell">A</string>
+    <string name="customInputFile">custom.txt</string>
 
     <string-array name="spinnerOps">
         <item>4x4</item>

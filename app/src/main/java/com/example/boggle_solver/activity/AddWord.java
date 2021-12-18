@@ -28,7 +28,7 @@ import java.util.Set;
 
 public class AddWord extends AppCompatActivity {
 
-    final String filename = "custom.txt";
+
     Set<String> words = new HashSet<>();
     int lastId;
     @Override
@@ -46,7 +46,7 @@ public class AddWord extends AppCompatActivity {
         lastId = R.id.confirmWordInput;
 
         try {
-            InputStream inputStream = this.openFileInput(filename);
+            InputStream inputStream = this.openFileInput(getString(R.string.customInputFile));
             if(inputStream != null) {
                 InputStreamReader iSR = new InputStreamReader(inputStream);
                 BufferedReader bR = new BufferedReader(iSR);
@@ -88,8 +88,9 @@ public class AddWord extends AppCompatActivity {
             return;
         }
         try {
+            word = word.toUpperCase();
             OutputStreamWriter fos = new OutputStreamWriter(this.openFileOutput("custom.txt", Context.MODE_APPEND));
-            fos.write(String.format("%s \n", word));
+            fos.write(String.format("%s\n", word));
             fos.close();
         } catch (IOException e){
             System.err.println("File write failed");
@@ -147,17 +148,21 @@ public class AddWord extends AppCompatActivity {
 
         TextView customWordView = findViewById(cl.topToTop);
         try {
-            InputStream inputStream = this.openFileInput(filename);
+            InputStream inputStream = this.openFileInput(getString(R.string.customInputFile));
             if(inputStream != null) {
                 InputStreamReader iSR = new InputStreamReader(inputStream);
                 BufferedReader bR = new BufferedReader(iSR);
 
+
                 String word;
+                int i = 0;
                 while((word = bR.readLine()) != null) {
+                    System.out.printf("%d: %s\n",i++, word);
                     if(!word.equals(customWordView.getText().toString())) {
                         out.append(word+"\n");
                     }
                 }
+                inputStream.close();
 
                 OutputStreamWriter fos = new OutputStreamWriter(this.openFileOutput("custom.txt", Context.MODE_PRIVATE));
                 fos.write(out.toString());
@@ -170,4 +175,6 @@ public class AddWord extends AppCompatActivity {
         }
         customWordView.setVisibility(View.GONE);
     }
+
+
 }

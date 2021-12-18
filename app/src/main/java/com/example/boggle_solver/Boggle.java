@@ -28,7 +28,7 @@ public class Boggle {
 	final int N;
 	int LIMIT;
 	String board;
-	Map<Integer,MutableInt> score = new HashMap<>();
+	Map<Integer,MutableInt> wordCounts = new HashMap<>();
 	public Boggle (String board, int limit) {
 		this.M = (int)Math.sqrt(board.length());
 		this.N = this.M;
@@ -90,12 +90,13 @@ public class Boggle {
 	{
 		// if we found word in trie / dictionary
 		if ((root.leaf) && str.length() >= LIMIT) {
-			MutableInt count = score.get(str.length());
+			MutableInt count = wordCounts.get(str.length());
+			boolean isContained = wordList.add(str);
 			if(count == null)
-				score.put(str.length(), new MutableInt());
-			else
+				wordCounts.put(str.length(), new MutableInt());
+			else if (isContained)
 				count.increment();
-			wordList.add(str);
+
 		}
 
 
@@ -156,7 +157,7 @@ public class Boggle {
 	//Output functions
 	// Gets wordcount of an m-length set of words
 	public int getCount(int len){
-		MutableInt i = score.get(len);
+		MutableInt i = wordCounts.get(len);
 		return ( i==null ) ? -1 : i.get();
 	}
 
