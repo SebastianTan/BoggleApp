@@ -28,13 +28,15 @@ public class Boggle {
 	final int N;
 	int LIMIT;
 	String board;
+	int error; //error code
+
 	Map<Integer,MutableInt> wordCounts = new HashMap<>();
 	public Boggle (String board, int limit) {
 		this.M = (int)Math.sqrt(board.length());
 		this.N = this.M;
 		this.board = board;
 		this.LIMIT = limit;
-
+		this.error = 0;
 	}
 
 	// trie Node
@@ -52,6 +54,61 @@ public class Boggle {
 			for (int i = 0; i < SIZE; i++)
 				Child[i] = null;
 		}
+	}
+	// 0 - no error, 1 - boardLength
+	public int isError() {
+		return this.error;
+	}
+	//Output functions
+	// Gets wordcount of an m-length set of words
+	public int getCount(int len){
+		MutableInt i = wordCounts.get(len);
+		return ( i==null ) ? -1 : i.get();
+	}
+
+	// Driver program to test above function
+	// Input string guaranteed to be a valid board
+	public String[] solveBoggle(String[] dictionary)
+	{
+
+		// Let the given dictionary be following
+
+		// root Node of trie
+		TrieNode root = new TrieNode();
+
+		// insert all words of dictionary into trie
+		for (String s : dictionary) {
+			insert(root, s);
+		}
+
+		this.board=this.board.toUpperCase();
+		char[][] boggle = new char[M][N];
+
+		for (int i = 0; i < this.board.length(); i++){
+			boggle[i / M][i % N] = this.board.charAt(i);
+			// Debug print board
+			// System.out.print(this.board.charAt(i) + " "); if ((i % N) == 5) System.out.println();
+		}
+
+		// char boggle[][] = { { 'G', 'I', 'Z' },
+		// 					{ 'U', 'E', 'K' },
+		// 					{ 'Q', 'S', 'E' } };
+
+		SortedSet<String> set = new TreeSet<>(new BoggleCompare());
+
+		findWords(boggle, root, set);
+//		Debug print solved board
+//		for (String s : set)  System.out.println(s);
+		return set.toArray(new String[0]);
+	}
+
+	void checkSize(int boardLength){
+		if(boardLength >=0){
+			int sr = (int)Math.sqrt(boardLength);
+
+			this.error = ((sr * sr)==boardLength) ? 0 : 1;
+		}
+		this.error = 0;
 	}
 
 	// If not present, inserts a key into the trie
@@ -152,52 +209,6 @@ public class Boggle {
 				}
 			}
 		}
-	}
-
-	//Output functions
-	// Gets wordcount of an m-length set of words
-	public int getCount(int len){
-		MutableInt i = wordCounts.get(len);
-		return ( i==null ) ? -1 : i.get();
-	}
-
-	// Driver program to test above function
-	// Input string guaranteed to be a valid board
-	public String[] solveBoggle(String[] dictionary)
-	{
-
-		// Let the given dictionary be following
-
-		// root Node of trie
-		TrieNode root = new TrieNode();
-
-		// insert all words of dictionary into trie
-		for (String s : dictionary) {
-			insert(root, s);
-		}
-
-		this.board=this.board.toUpperCase();
-		char[][] boggle = new char[M][N];
-
-		for (int i = 0; i < this.board.length(); i++){
-			boggle[i / M][i % N] = this.board.charAt(i);
-			// Debug
-//			System.out.print(this.board.charAt(i) + " ");
-//			if ((i % N) == 5) System.out.println();
-		}
-
-		// char boggle[][] = { { 'G', 'I', 'Z' },
-		// 					{ 'U', 'E', 'K' },
-		// 					{ 'Q', 'S', 'E' } };
-
-		SortedSet<String> set = new TreeSet<>(new BoggleCompare());
-
-		findWords(boggle, root, set);
-//		Debug
-//		for (String s : set){
-//			System.out.println(s);
-//		}
-		return set.toArray(new String[0]);
 	}
 }
 // This code is contributed by Sumit Ghosh

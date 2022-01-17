@@ -12,6 +12,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.InputType;
@@ -123,6 +124,64 @@ import java.util.TreeSet;
             getMenuInflater().inflate(R.menu.menu, menu);
             return true;
         }
+
+        //DEMO FIELDS
+        static final int scrollSpeed = 100;
+        // Thread running code
+
+        long startTime = 0;
+        int solutionPos = 0;
+        float solutionDelay = 10;
+
+        Handler timerHandler = new Handler();
+        Runnable timerRunnable = new Runnable() {
+            @Override
+            public void run() {
+                long millis = System.currentTimeMillis() - startTime;
+
+
+                    TextView textView = findViewById(R.id.wordListWrap);
+                int tvHeight = (int) (textView.getLineCount()*textView.getTextSize());
+//            String curr_text = textView.getText().toString();
+//            curr_text = String.format("%d:%02d\n", minutes, seconds) + curr_text;
+//            textView.setText(curr_text);
+
+                //contentOffset to potentially get the full scroll size
+                if (tvHeight < scrollSpeed){
+                    timerHandler.removeCallbacks(timerRunnable);
+                    return;
+                }
+                if (millis > 2800) {
+                    solutionDelay = 1;
+                    solutionPos += 18*1.5;
+                }
+                else if (millis > 2250){
+                    solutionDelay = 4;
+                    solutionPos += 4;
+                }
+                else if (millis > 750) {
+                    solutionDelay = 6;
+                    solutionPos += 3;
+                }
+                else {
+                    solutionPos += 1;
+                }
+
+                textView.scrollTo(0,solutionPos);
+
+                if(solutionPos > tvHeight) {
+                    textView.setGravity(Gravity.BOTTOM);
+                    textView.requestLayout();
+                    timerHandler.removeCallbacks(timerRunnable);
+                    TextView wordlist = findViewById(R.id.wordListWrap);
+                    wordlist.setGravity(Gravity.BOTTOM);
+                    return;
+                }
+
+                timerHandler.postDelayed(this, (long)solutionDelay);
+
+            }
+        };
 
 
         // Runs on button press and prints solution to boggle board
