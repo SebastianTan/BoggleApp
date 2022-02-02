@@ -34,9 +34,11 @@ public class Boggle {
 	public Boggle (String board, int limit) {
 		this.M = (int)Math.sqrt(board.length());
 		this.N = this.M;
+
 		this.board = board;
 		this.LIMIT = limit;
-		this.error = 0;
+		this.error = 0; //
+		checkSize(board.length());
 	}
 
 	// trie Node
@@ -105,8 +107,7 @@ public class Boggle {
 	void checkSize(int boardLength){
 		if(boardLength >=0){
 			int sr = (int)Math.sqrt(boardLength);
-
-			this.error = ((sr * sr)==boardLength) ? 0 : 1;
+			this.error = ((sr * sr)==boardLength) ? this.error : 1;
 		}
 		this.error = 0;
 	}
