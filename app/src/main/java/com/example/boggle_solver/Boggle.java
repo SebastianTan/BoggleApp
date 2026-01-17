@@ -31,7 +31,8 @@ public class Boggle {
 	int error; //error code
 
 	Map<Integer,MutableInt> wordCounts = new HashMap<>();
-	public Boggle (String board, int limit) {
+	public Boggle (String board
+					, int limit) { //lowest word count limit
 		this.M = (int)Math.sqrt(board.length());
 		this.N = this.M;
 
@@ -56,16 +57,6 @@ public class Boggle {
 			for (int i = 0; i < SIZE; i++)
 				Child[i] = null;
 		}
-	}
-	// 0 - no error, 1 - boardLength
-	public int isError() {
-		return this.error;
-	}
-	//Output functions
-	// Gets wordcount of an m-length set of words
-	public int getCount(int len){
-		MutableInt i = wordCounts.get(len);
-		return ( i==null ) ? -1 : i.get();
 	}
 
 	// Driver program to test above function
@@ -103,6 +94,18 @@ public class Boggle {
 //		for (String s : set)  System.out.println(s);
 		return set.toArray(new String[0]);
 	}
+	// 0 - no error, 1 - boardLength
+	public int isError() {
+		return this.error;
+	}
+	//Output functions
+	// Gets wordcount of an m-length set of words
+	public int getCount(int len){
+		MutableInt i = wordCounts.get(len);
+		return ( i==null ) ? -1 : i.get();
+	}
+
+	
 
 	void checkSize(int boardLength){
 		if(boardLength >=0){
@@ -212,4 +215,4 @@ public class Boggle {
 		}
 	}
 }
-// This code is contributed by Sumit Ghosh
+//This code is contributed by Sumit Ghosh
