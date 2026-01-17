@@ -20,7 +20,17 @@ class MutableInt { //non-thread safe class for incrementing score
 }
 // Java program for Boggle game
 public class Boggle {
-
+/*
+     * Holds a Boggle board and allows you to solve it with user provided dictionary.
+     *	Public Interface: solveBoggle, 
+	 * 
+     * @param LIMIT The minimum word length.
+     * @param board NxN board of letters.
+	 * 
+     * @return The quotient that is the result of {@code x/y}.
+     * @throws ArithmeticException if {@code y} is equal to zero.
+     * @see #add(int, int)
+     */
 	// Alphabet size
 	static final int SIZE = 26;
 
@@ -64,6 +74,9 @@ public class Boggle {
 	public String[] solveBoggle(String[] dictionary)
 	{
 
+	/*
+     * Return all valid boggle words found in dicionary.
+     */
 		// Let the given dictionary be following
 
 		// root Node of trie
@@ -172,7 +185,6 @@ public class Boggle {
 				if (root.Child[K] != null) {
 					// current character
 					char ch = (char)(K + 'A');
-
 					for (int a = -1; a < 2; a++){
 						for(int b = -1; b < 2; b++){
 							if (isSafe(i + a, j + b, visited)
